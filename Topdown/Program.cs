@@ -1,4 +1,5 @@
 ﻿using Raylib_cs;
+using System.Data;
 using System.Numerics;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
@@ -19,7 +20,8 @@ Random generator = new Random();
 Raylib.InitWindow(800, 600, "Wsg gang :33");
 Raylib.SetTargetFPS(60);
 
-Color PASTEL = new Color(191, 213, 232, 255);
+Color BG = new Color(58,58,58,255);
+Color BLOOD = new Color(136, 8, 8, 255);
 
 Rectangle characterRect = new Rectangle(300, 400, 64, 64);
 Texture2D characterImage = Raylib.LoadTexture("hollowhead.png");
@@ -75,8 +77,6 @@ while (!Raylib.WindowShouldClose())
     characterRect.x += movement.X;
     characterRect.y += movement.Y;
 
-    bool point1 = true;
-
     while (characterRect.x <= 0 || characterRect.x > 800-64)
     {
         characterRect.x -= movement.X;
@@ -91,32 +91,44 @@ while (!Raylib.WindowShouldClose())
         characterRect.y -= movement.Y;
     }
 
+int[,] mapData = {
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,1,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,1,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+};
+
     Raylib.BeginDrawing();
     if (scene == "start")
     {
-        Raylib.ClearBackground(Color.DARKBLUE);
-        Raylib.DrawText("Press [SPACE] to start.", 120, 20, 40, Color.BLACK);
+        Raylib.ClearBackground(Color.BLACK);
+        Raylib.DrawText("Press [SPACE] to start.", 120, 20, 40, BLOOD);
         if (Raylib.IsKeyPressed(KeyboardKey.KEY_SPACE))
         {
             scene = "game";
+            characterRect.x = 300;
+            characterRect.y = 400;
         }
     }
 
     else if (scene == "game")
     {
-        Raylib.ClearBackground(Color.DARKGREEN);
-        Raylib.DrawRectangleRec(goal, Color.GREEN);
-        if (point1 == true)
+        Raylib.ClearBackground(BG);
+        Raylib.DrawRectangleRec(goal, BLOOD);
+        if (points == 0)
         {
-            Raylib.DrawRectangleRec(point,Color.BLUE);
-            while (Raylib.CheckCollisionRecs(characterRect, point) && point1 == true)
+            Raylib.DrawRectangleRec(point,Color.GOLD);
+            if (Raylib.CheckCollisionRecs(characterRect, point))
             {
                 points =+ 1;
-                point1 = false;
             }   
         }
         Raylib.DrawTexture(characterImage, (int)characterRect.x, (int)characterRect.y, Color.WHITE);
-        Raylib.DrawText($"Points:{points}",0,0,25,Color.BLUE);
+        Raylib.DrawText($"Points:{points}",0,0,25,Color.GOLD);
         for (int i = 0; i < walls.Count; i++)
         {
             Raylib.DrawRectangleRec(walls[i], Color.BLACK);
@@ -142,8 +154,8 @@ while (!Raylib.WindowShouldClose())
 
     else if (scene == "won")
     {
-        Raylib.ClearBackground(Color.DARKBLUE); 
-        Raylib.DrawText("You win!\nPress [SPACE] to restart.\nPress [ENTER to close]", 120, 60, 40, Color.BLACK);
+        Raylib.ClearBackground(Color.BLACK);
+        Raylib.DrawText("You win!\nPress [SPACE] to restart.\nPress [ENTER to close]", 120, 60, 40, BLOOD);
         if (Raylib.IsKeyPressed(KeyboardKey.KEY_SPACE))
         {
             scene = "start";
