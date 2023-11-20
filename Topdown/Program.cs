@@ -1,4 +1,5 @@
 ﻿using Raylib_cs;
+using System.ComponentModel;
 using System.Data;
 using System.Numerics;
 using System.Reflection.Metadata.Ecma335;
@@ -33,6 +34,16 @@ walls.Add(new Rectangle(192, 32, 32, 128));
 walls.Add(new Rectangle(250, 350, 32, 600));
 walls.Add(new Rectangle(250,350,200,32));
 walls.Add(new Rectangle(450,150, 32,232));
+int[,] mapData = {
+    {0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,2,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0},
+};
 
 Vector2 movement = new Vector2(0.1f, 0.1f);
 
@@ -44,6 +55,7 @@ Rectangle point = new Rectangle(125,500,15,15);
 string scene = "start";
 int points = 0;
 float speed = 5;
+int tilesize = 32;
 
 while (!Raylib.WindowShouldClose())
 {
@@ -91,16 +103,6 @@ while (!Raylib.WindowShouldClose())
         characterRect.y -= movement.Y;
     }
 
-int[,] mapData = {
-    {0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,1,0,0,0,0,0,0,0},
-    {0,0,0,0,0,1,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0},
-};
 
     Raylib.BeginDrawing();
     if (scene == "start")
@@ -118,7 +120,7 @@ int[,] mapData = {
     else if (scene == "game")
     {
         Raylib.ClearBackground(BG);
-        Raylib.DrawRectangleRec(goal, BLOOD);
+        // Raylib.DrawRectangleRec(goal, BLOOD);
         if (points == 0)
         {
             Raylib.DrawRectangleRec(point,Color.GOLD);
@@ -133,12 +135,16 @@ int[,] mapData = {
         {
             Raylib.DrawRectangleRec(walls[i], Color.BLACK);
         }
-for (int y = 0; y < mapData.Length; y++)
+for (int y = 0; y < mapData.GetLength(0); y++)
 {
-    for (int x = 0; x < mapData.Length; x++)
+    for (int x = 0; x < mapData.GetLength(1); x++)
     {
-
-        // Raylib.DrawRectangle(x,y,32,32);
+        if (mapData [y, x] == 1){
+        Raylib.DrawRectangle(x*tilesize,y*tilesize,tilesize,tilesize,BLOOD);
+        }
+        if (mapData [y, x] == 2){
+        Raylib.DrawRectangleRec(goal,BLOOD);
+        }
     }
 }
         foreach (Rectangle wall in walls)
