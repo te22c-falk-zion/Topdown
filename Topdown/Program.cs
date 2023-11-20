@@ -35,7 +35,7 @@ walls.Add(new Rectangle(250, 350, 32, 600));
 walls.Add(new Rectangle(250,350,200,32));
 walls.Add(new Rectangle(450,150, 32,232));
 int[,] mapData = {
-    {0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {1,1,1,1,1,1,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,2,0,0,0,0,0,0},
@@ -140,7 +140,7 @@ for (int y = 0; y < mapData.GetLength(0); y++)
     for (int x = 0; x < mapData.GetLength(1); x++)
     {
         if (mapData [y, x] == 1){
-        Raylib.DrawRectangle(x*tilesize,y*tilesize,tilesize,tilesize,BLOOD);
+        Raylib.DrawRectangle(x*tilesize,y*tilesize,tilesize,tilesize,Color.BLACK);
         }
         if (mapData [y, x] == 2){
         Raylib.DrawRectangleRec(goal,BLOOD);
