@@ -7,18 +7,10 @@ using System.Security.Cryptography;
 
 Random generator = new Random();
 
-// List<string> names = new List<string>() {"Blah", "BlahBlah", "BlahBlahBlah", "Yip"};
-// names.Add("Yap");
-// names.Add("Yop");
+int screenWidth = 800;
+int screenHeight = 600;
 
-// foreach (string name in names)
-// {
-//     Console.WriteLine(name);
-// }
-//  List<string> walls = new List<string>();
-//  walls.Add(Rectangle(300, 200, 50, 100));
-
-Raylib.InitWindow(800, 600, "Wsg gang :33");
+Raylib.InitWindow(screenWidth, screenHeight, "Wsg gang :33");
 Raylib.SetTargetFPS(60);
 
 Color BG = new Color(58,58,58,255);
@@ -51,6 +43,11 @@ Vector2 size = new Vector2(50, 50);
 Rectangle goal = new Rectangle(100, 100, 50, 50);
 Rectangle point = new Rectangle(125,500,15,15);
 
+Camera2D camera = new camera ( 0 );
+camera.target = new Vector2( characterRect.x + 20.0f, characterRect.y + 20.0f );
+camera.offset = new Vector2( screenWidth/2.0f, screenHeight/2.0f );
+camera.rotation = 0.0f;
+camera.zoom = 1.0f;
 
 string scene = "start";
 int points = 0;
@@ -105,8 +102,10 @@ while (!Raylib.WindowShouldClose())
 
 
     Raylib.BeginDrawing();
-    if (scene == "start")
+
     Raylib.ClearBackground(Color.BLACK);
+
+    if (scene == "start")
     {
         Raylib.DrawText("Press [SPACE] to start.", 120, 20, 40, BLOOD);
         if (Raylib.IsKeyPressed(KeyboardKey.KEY_SPACE))
