@@ -106,8 +106,8 @@ while (!Raylib.WindowShouldClose())
 
     Raylib.BeginDrawing();
     if (scene == "start")
+    Raylib.ClearBackground(Color.BLACK);
     {
-        Raylib.ClearBackground(Color.BLACK);
         Raylib.DrawText("Press [SPACE] to start.", 120, 20, 40, BLOOD);
         if (Raylib.IsKeyPressed(KeyboardKey.KEY_SPACE))
         {
