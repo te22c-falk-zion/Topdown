@@ -29,8 +29,8 @@ walls.Add(new Rectangle(450,150, 32,232));
 int[,] mapData = {
     {1,1,1,1,1,1,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,2,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,2,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -43,7 +43,7 @@ Vector2 size = new Vector2(50, 50);
 Rectangle goal = new Rectangle(100, 100, 50, 50);
 Rectangle point = new Rectangle(125,500,15,15);
 
-Camera2D camera = new camera ( 0 );
+Camera2D camera = new Camera2D();
 camera.target = new Vector2( characterRect.x + 20.0f, characterRect.y + 20.0f );
 camera.offset = new Vector2( screenWidth/2.0f, screenHeight/2.0f );
 camera.rotation = 0.0f;
