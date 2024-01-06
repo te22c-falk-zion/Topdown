@@ -3,18 +3,21 @@ using System.ComponentModel;
 using System.Data;
 using System.Numerics;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using System.Threading.Tasks.Dataflow;
 
 Random generator = new Random();
 
 int screenWidth = 800;
 int screenHeight = 600;
 string scene = "start";
-int points = 0;
+int ScorePoints = 0;
 float speed = 5;
 int tilesize = 64;
+int pointsize = 16;
 bool cameraBool = false;
-bool point1 = true;
+bool text = false;
 
 Raylib.InitWindow(screenWidth, screenHeight, "Wsg gang :33");
 Raylib.SetTargetFPS(60);
@@ -26,22 +29,22 @@ Rectangle characterRect = new Rectangle(300, 400, 64, 64);
 Texture2D characterImage = Raylib.LoadTexture("hollowhead.png");
 
 int[,] mapData = {
-    {1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {1,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 };
 
 List<Rectangle> walls = new();
@@ -58,7 +61,34 @@ List<Rectangle> walls = new();
         }
     }
 }
-
+List<Rectangle> goals = new();
+{
+    for (int y = 0; y < mapData.GetLength(0); y++)
+    {
+        for (int x = 0; x < mapData.GetLength(1); x++)
+        {
+            if (mapData[y, x] == 2)
+            {
+                Rectangle g = new Rectangle(x * tilesize, y * tilesize, tilesize, tilesize);
+                goals.Add(g);
+            }
+        }
+    }
+}
+List<Rectangle> points = new();
+{
+    for (int y = 0; y < mapData.GetLength(0); y++)
+    {
+        for (int x = 0; x < mapData.GetLength(1); x++)
+        {
+            if (mapData[y, x] == 3)
+            {
+                Rectangle p = new Rectangle(x * tilesize, y * tilesize, pointsize, pointsize);
+                points.Add(p);
+            }
+        }
+    }
+}
 
 Vector2 movement = new Vector2(0.1f, 0.1f);
 
@@ -100,7 +130,6 @@ while (!Raylib.WindowShouldClose())
         movement = Vector2.Normalize(movement);
     }
 
-
     movement *= speed;
 
     characterRect.x += movement.X;
@@ -114,7 +143,12 @@ while (!Raylib.WindowShouldClose())
 
     characterRect.y += movement.Y;
     // Kolla kollisioner
-
+    if(CheckWallCollision(characterRect, walls))
+    {
+        
+        characterRect.y -= movement.Y;
+    
+    }
     // while (characterRect.x <= 0 || characterRect.x > screenWidth-64)
     // {
     //     characterRect.x -= movement.X;
@@ -141,10 +175,10 @@ while (!Raylib.WindowShouldClose())
         {
             scene = "game";
             cameraBool = true;
-            point1 = true;
-            points = 0;
+            ScorePoints = 0;
             characterRect.x = 300;
             characterRect.y = 400;
+            text = true;
         }
     }
 
@@ -153,21 +187,20 @@ while (!Raylib.WindowShouldClose())
         Raylib.BeginMode2D(camera);
         if (cameraBool == true)
         {
-            camera.target = new Vector2(characterRect.x + 32, characterRect.y + 32);
+            camera.target = new Vector2(characterRect.x +32 , characterRect.y + 32);
         }
         Raylib.ClearBackground(BG);
 
-        if (point1 == true)
-        {
-            Raylib.DrawRectangleRec(point, Color.GOLD);
-            if (Raylib.CheckCollisionRecs(characterRect, point))
-            {
-                points = +1;
-                point1 = false;
-            }
-        }
+        // if (point1 == true)
+        // {
+        //     Raylib.DrawRectangleRec(point, Color.GOLD);
+        //     if (Raylib.CheckCollisionRecs(characterRect, point))
+        //     {
+        //         points = +1;
+        //         point1 = false;
+        //     }
+        // }
         Raylib.DrawTexture(characterImage, (int)characterRect.x, (int)characterRect.y, Color.WHITE);
-        Raylib.DrawText($"Points:{points}", 0, 0, 25, BLOOD);
         // for (int i = 0; i < walls.Count; i++)
         // {
         //     Raylib.DrawRectangleRec(walls[i], Color.BLACK);
@@ -182,20 +215,37 @@ while (!Raylib.WindowShouldClose())
                 }
                 if (mapData[y, x] == 2)
                 {
-                    Raylib.DrawRectangleRec(goal, BLOOD);
+                    Raylib.DrawRectangle(x * tilesize, y * tilesize, tilesize, tilesize, BLOOD);
                 }
                 if (mapData[y, x] == 3)
                 {
-                    Raylib.DrawRectangleRec(point, Color.GOLD);
+                    Raylib.DrawRectangle(x * tilesize, y * tilesize, pointsize, pointsize, Color.GOLD);
                 }
             }
         }
 
-        
-        if (Raylib.CheckCollisionRecs(characterRect, goal))
+        if (text == true)
         {
-            scene = "won";
+            Raylib.DrawText($"Points:{ScorePoints}",(int)camera.target.X - 336,(int)camera.target.Y - 236, 25, BLOOD);
         }
+
+        foreach (Rectangle g in goals)
+        {
+            if(Raylib.CheckCollisionRecs(characterRect, g))
+            {
+                scene = "won";
+            }
+        }
+
+        foreach (Rectangle p in points)
+        {
+            if(Raylib.CheckCollisionRecs(characterRect, p))
+            {
+                ScorePoints = +1;
+            }
+        }
+        
+
 
     }
 
@@ -206,21 +256,14 @@ while (!Raylib.WindowShouldClose())
         if (Raylib.IsKeyPressed(KeyboardKey.KEY_SPACE))
         {
             scene = "start";
-            points = 0;
+            ScorePoints = 0;
         }
         else if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER))
         {
             Raylib.CloseWindow();
         }
     }
-
-
-
-
-
-
-
-
+    
     Raylib.EndDrawing();
 }
 
