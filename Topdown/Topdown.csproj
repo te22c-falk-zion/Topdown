@@ -9,6 +9,9 @@
 
   <ItemGroup>
   <Content Include="hollowhead.png" CopyToOutputDirectory="always" />
+  <Content Include="bwblock.png" CopyToOutputDirectory="always" />
+  <Content Include="heartPoint.png" CopyToOutputDirectory="always" />
+  <Content Include="skullGoal.png" CopyToOutputDirectory="always" />
   </ItemGroup>
   
   <ItemGroup>

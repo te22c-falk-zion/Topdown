@@ -27,6 +27,9 @@ Color BLOOD = new Color(136, 8, 8, 255);
 
 Rectangle characterRect = new Rectangle(300, 400, 64, 64);
 Texture2D characterImage = Raylib.LoadTexture("hollowhead.png");
+Texture2D Block = Raylib.LoadTexture("bwblock.png");
+Texture2D Heart = Raylib.LoadTexture("heartPoint.png");
+Texture2D Skull = Raylib.LoadTexture("skullGoal.png");
 
 int[,] mapData = {
     {0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -34,7 +37,7 @@ int[,] mapData = {
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -211,15 +214,16 @@ while (!Raylib.WindowShouldClose())
             {
                 if (mapData[y, x] == 1)
                 {
-                    Raylib.DrawRectangle(x * tilesize, y * tilesize, tilesize, tilesize, Color.BLACK);
+                    Raylib.DrawTexture(Block, x * tilesize, y * tilesize, Color.WHITE);
                 }
                 if (mapData[y, x] == 2)
                 {
-                    Raylib.DrawRectangle(x * tilesize, y * tilesize, tilesize, tilesize, BLOOD);
+                    Raylib.DrawTexture(Skull, x * tilesize, y * tilesize, Color.WHITE);
+                    
                 }
                 if (mapData[y, x] == 3)
                 {
-                    Raylib.DrawRectangle(x * tilesize, y * tilesize, pointsize, pointsize, Color.GOLD);
+                    Raylib.DrawTexture(Heart,x * tilesize, y * tilesize,Color.WHITE);
                 }
             }
         }
@@ -241,7 +245,7 @@ while (!Raylib.WindowShouldClose())
         {
             if(Raylib.CheckCollisionRecs(characterRect, p))
             {
-                ScorePoints = +1;
+                ScorePoints = ScorePoints + 1;
             }
         }
         
@@ -263,7 +267,7 @@ while (!Raylib.WindowShouldClose())
             Raylib.CloseWindow();
         }
     }
-    
+
     Raylib.EndDrawing();
 }
 
