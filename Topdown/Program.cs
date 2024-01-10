@@ -163,7 +163,7 @@ while (!Raylib.WindowShouldClose())
         {
             ScorePoints = ScorePoints + 1;
             points.Remove(pointRect);
-        }
+        
             for (int y = 0; y < mapData.GetLength(0); y++)
             {
                 for (int x = 0; x < mapData.GetLength(1); x++)
@@ -174,6 +174,7 @@ while (!Raylib.WindowShouldClose())
                     } 
                 }
             }
+        }
         Raylib.DrawTexture(characterImage, (int)characterRect.x, (int)characterRect.y, Color.WHITE);
 
     // while (characterRect.x <= 0 || characterRect.x > screenWidth-64)
@@ -197,7 +198,9 @@ while (!Raylib.WindowShouldClose())
 
     if (scene == "start")
     {
-        Raylib.DrawText("Press [SPACE] to start.", 120, 20, 40, BLOOD);
+        Raylib.DrawText("Welcome honourless...The trials await you", 120, 20, 40, BLOOD);
+        Raylib.DrawText("Press [space] to begin your ordel", 160, 20, 40, BLOOD);
+        Raylib.DrawText("Try you best to humour us...", 200, 20, 40, BLOOD);
         if (Raylib.IsKeyPressed(KeyboardKey.KEY_SPACE))
         {
             scene = "game";
@@ -272,13 +275,8 @@ while (!Raylib.WindowShouldClose())
     else if (scene == "won")
     {
         Raylib.ClearBackground(Color.BLACK);
-        Raylib.DrawText("You win!\nPress [SPACE] to restart.\nPress [ENTER to close]", 120, 60, 40, BLOOD);
-        if (Raylib.IsKeyPressed(KeyboardKey.KEY_SPACE))
-        {
-            scene = "start";
-            ScorePoints = 0;
-        }
-        else if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER))
+        Raylib.DrawText("You win!\nPress [ENTER to close]", 120, 60, 40, BLOOD);
+        if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER))
         {
             Raylib.CloseWindow();
         }
