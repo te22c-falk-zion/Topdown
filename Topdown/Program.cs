@@ -30,6 +30,9 @@ Texture2D characterImage = Raylib.LoadTexture("hollowhead.png");
 Texture2D Block = Raylib.LoadTexture("bwblock.png");
 Texture2D Heart = Raylib.LoadTexture("heartPoint.png");
 Texture2D Skull = Raylib.LoadTexture("skullGoal.png");
+// List<Texture2D> textures = new();
+// textures.Add(Raylib.LoadTexture("heartPoint.png"));
+
 
 int[,] mapData = {
     {0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -88,6 +91,7 @@ List<Rectangle> points = new();
             {
                 Rectangle p = new Rectangle(x * tilesize, y * tilesize, pointsize, pointsize);
                 points.Add(p);
+
             }
         }
     }
@@ -145,13 +149,33 @@ while (!Raylib.WindowShouldClose())
     }
 
     characterRect.y += movement.Y;
+    // characterRect.y -= gravity;
     // Kolla kollisioner
     if(CheckWallCollision(characterRect, walls))
     {
         
         characterRect.y -= movement.Y;
-    
+        // characterRect.y += gravity;
     }
+
+        Rectangle pointRect = CheckPointCollision(characterRect, points);
+        if (pointRect.width != 0)
+        {
+            ScorePoints = ScorePoints + 1;
+            points.Remove(pointRect);
+        }
+            for (int y = 0; y < mapData.GetLength(0); y++)
+            {
+                for (int x = 0; x < mapData.GetLength(1); x++)
+                {
+                    if (mapData[(int)pointRect.y/tilesize,(int)pointRect.x/tilesize] == 3)
+                    {
+                    mapData[(int)pointRect.y/tilesize,(int)pointRect.x/tilesize] = 0;
+                    } 
+                }
+            }
+        Raylib.DrawTexture(characterImage, (int)characterRect.x, (int)characterRect.y, Color.WHITE);
+
     // while (characterRect.x <= 0 || characterRect.x > screenWidth-64)
     // {
     //     characterRect.x -= movement.X;
@@ -194,20 +218,11 @@ while (!Raylib.WindowShouldClose())
         }
         Raylib.ClearBackground(BG);
 
-        // if (point1 == true)
-        // {
-        //     Raylib.DrawRectangleRec(point, Color.GOLD);
-        //     if (Raylib.CheckCollisionRecs(characterRect, point))
-        //     {
-        //         points = +1;
-        //         point1 = false;
-        //     }
-        // }
-        Raylib.DrawTexture(characterImage, (int)characterRect.x, (int)characterRect.y, Color.WHITE);
         // for (int i = 0; i < walls.Count; i++)
         // {
         //     Raylib.DrawRectangleRec(walls[i], Color.BLACK);
         // }
+
         for (int y = 0; y < mapData.GetLength(0); y++)
         {
             for (int x = 0; x < mapData.GetLength(1); x++)
@@ -241,14 +256,15 @@ while (!Raylib.WindowShouldClose())
             }
         }
 
-        foreach (Rectangle p in points)
-        {
-            if(Raylib.CheckCollisionRecs(characterRect, p))
-            {
-                ScorePoints = ScorePoints + 1;
-            }
-        }
-        
+
+
+        // Rectangle pointRect = CheckPointCollision(characterRect, points);
+        // if (pointRect.width != 0)
+        // {
+        //     ScorePoints = ScorePoints + 1;
+        //     points.Remove(pointRect);
+        // }
+        Raylib.DrawTexture(characterImage, (int)characterRect.x, (int)characterRect.y, Color.WHITE);
 
 
     }
@@ -282,4 +298,17 @@ static bool CheckWallCollision(Rectangle characterRect, List<Rectangle> walls)
     }
 
     return false;
+}
+
+static Rectangle CheckPointCollision(Rectangle characterRect, List<Rectangle> points)
+{
+    foreach (Rectangle p in points)
+    {
+        if (Raylib.CheckCollisionRecs(characterRect, p))
+        {
+            return p;
+        }
+    }
+
+    return new Rectangle();
 }
