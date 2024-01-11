@@ -9,15 +9,18 @@ using System.Threading.Tasks.Dataflow;
 
 Random generator = new Random();
 
-int screenWidth = 800;
-int screenHeight = 600;
+int screenWidth = 900;
+int screenHeight = 650;
 string scene = "start";
 int ScorePoints = 0;
-float speed = 5;
+float speed = 8;
 int tilesize = 64;
 int pointsize = 16;
 bool cameraBool = false;
 bool text = false;
+float playerGravity = 9.8f;
+bool gravity = true;
+bool grounded = false;
 
 Raylib.InitWindow(screenWidth, screenHeight, "Wsg gang :33");
 Raylib.SetTargetFPS(60);
@@ -25,7 +28,7 @@ Raylib.SetTargetFPS(60);
 Color BG = new Color(58, 58, 58, 255);
 Color BLOOD = new Color(136, 8, 8, 255);
 
-Rectangle characterRect = new Rectangle(300, 400, 64, 64);
+Rectangle characterRect = new Rectangle(screenWidth/2, screenHeight/2, 64, 64);
 Texture2D characterImage = Raylib.LoadTexture("hollowhead.png");
 Texture2D Block = Raylib.LoadTexture("bwblock.png");
 Texture2D Heart = Raylib.LoadTexture("heartPoint.png");
@@ -38,14 +41,14 @@ int[,] mapData = {
     {0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {2,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -105,7 +108,6 @@ Rectangle point = new Rectangle(125, 500, 15, 15);
 
 
 Camera2D camera = new Camera2D();
-camera.target = new Vector2(characterRect.x + 20.0f, characterRect.y + 20.0f);
 camera.offset = new Vector2(screenWidth / 2.0f, screenHeight / 2.0f);
 camera.rotation = 0.0f;
 camera.zoom = 1.0f;
@@ -175,7 +177,6 @@ while (!Raylib.WindowShouldClose())
                 }
             }
         }
-        Raylib.DrawTexture(characterImage, (int)characterRect.x, (int)characterRect.y, Color.WHITE);
 
     // while (characterRect.x <= 0 || characterRect.x > screenWidth-64)
     // {
@@ -198,26 +199,26 @@ while (!Raylib.WindowShouldClose())
 
     if (scene == "start")
     {
-        Raylib.DrawText("Welcome honourless...The trials await you", 120, 20, 40, BLOOD);
-        Raylib.DrawText("Press [space] to begin your ordel", 160, 20, 40, BLOOD);
-        Raylib.DrawText("Try you best to humour us...", 200, 20, 40, BLOOD);
+        Raylib.DrawText("Welcome oh honourless...The trials await you", 80, 40, 30, BLOOD);
+        Raylib.DrawText("Press [space] to begin your ordeal", 120, 100, 30, BLOOD);
+        Raylib.DrawText("Do your best to humour us...", 160, 350, 30, BLOOD);
         if (Raylib.IsKeyPressed(KeyboardKey.KEY_SPACE))
         {
             scene = "game";
             cameraBool = true;
             ScorePoints = 0;
-            characterRect.x = 300;
-            characterRect.y = 400;
+            characterRect.x = 320;
+            characterRect.y = 320;
             text = true;
         }
     }
 
     else if (scene == "game")
     {
-        Raylib.BeginMode2D(camera);
         if (cameraBool == true)
         {
-            camera.target = new Vector2(characterRect.x +32 , characterRect.y + 32);
+            Raylib.BeginMode2D(camera);
+            camera.target = new Vector2(characterRect.x + 32, characterRect.y + 32);
         }
         Raylib.ClearBackground(BG);
 
@@ -246,11 +247,15 @@ while (!Raylib.WindowShouldClose())
             }
         }
 
+        Raylib.DrawTexture(characterImage, (int)characterRect.x, (int)characterRect.y, Color.WHITE);
+
+        
         if (text == true)
         {
-            Raylib.DrawText($"Points:{ScorePoints}",(int)camera.target.X - 336,(int)camera.target.Y - 236, 25, BLOOD);
+            Raylib.DrawText($"Points:{ScorePoints}",(int)characterRect.x - 15,(int)characterRect.y - 50, 25, BLOOD);
         }
-
+        
+        Raylib.EndMode2D();
         foreach (Rectangle g in goals)
         {
             if(Raylib.CheckCollisionRecs(characterRect, g))
@@ -267,19 +272,27 @@ while (!Raylib.WindowShouldClose())
         //     ScorePoints = ScorePoints + 1;
         //     points.Remove(pointRect);
         // }
-        Raylib.DrawTexture(characterImage, (int)characterRect.x, (int)characterRect.y, Color.WHITE);
-
-
     }
 
     else if (scene == "won")
     {
         Raylib.ClearBackground(Color.BLACK);
-        Raylib.DrawText("You win!\nPress [ENTER to close]", 120, 60, 40, BLOOD);
+        Raylib.DrawText("Good enough.\nThe trial is pleased.\nPress [ENTER] to leave", 120, 60, 40, BLOOD);
         if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER))
         {
             Raylib.CloseWindow();
         }
+    }
+
+    else if (scene == "defeat")
+    {
+        Raylib.ClearBackground(Color.BLACK);
+        Raylib.DrawText("Weak.\nPress [ENTER] to quit", 120, 60, 40, BLOOD);
+        // gametime thing if they dont leave fast enough flash LEAVE and forcequit the window.
+        if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER))
+        {
+            Raylib.CloseWindow();
+        } 
     }
 
     Raylib.EndDrawing();
