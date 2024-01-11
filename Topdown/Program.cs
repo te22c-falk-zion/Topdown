@@ -11,6 +11,8 @@ Random generator = new Random();
 
 int screenWidth = 900;
 int screenHeight = 650;
+int charHeight = 50;
+int charWidth= 45;
 string scene = "start";
 int ScorePoints = 0;
 float speed = 8;
@@ -28,7 +30,7 @@ Raylib.SetTargetFPS(60);
 Color BG = new Color(58, 58, 58, 255);
 Color BLOOD = new Color(136, 8, 8, 255);
 
-Rectangle characterRect = new Rectangle(screenWidth/2, screenHeight/2, 64, 64);
+Rectangle characterRect = new Rectangle(screenWidth/2, screenHeight/2, charWidth, charHeight);
 Texture2D characterImage = Raylib.LoadTexture("hollowhead.png");
 Texture2D Block = Raylib.LoadTexture("bwblock.png");
 Texture2D Heart = Raylib.LoadTexture("heartPoint.png");
