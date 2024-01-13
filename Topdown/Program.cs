@@ -196,21 +196,6 @@ while (!Raylib.WindowShouldClose())
             }
         }
 
-    // while (characterRect.x <= 0 || characterRect.x > screenWidth-64)
-    // {
-    //     characterRect.x -= movement.X;
-    // }
-
-    // while (characterRect.y <= 0)
-    // {
-    //     characterRect.y = -movement.Y;
-    // }
-    // while (characterRect.y >= screenHeight - 64)
-    // {
-    //     characterRect.y -= movement.Y;
-    // }
-
-
     Raylib.BeginDrawing();
 
     Raylib.ClearBackground(Color.BLACK);
@@ -282,14 +267,6 @@ while (!Raylib.WindowShouldClose())
             }
         }
 
-
-
-        // Rectangle pointRect = CheckPointCollision(characterRect, points);
-        // if (pointRect.width != 0)
-        // {
-        //     ScorePoints = ScorePoints + 1;
-        //     points.Remove(pointRect);
-        // }
     }
 
     else if (scene == "won")
