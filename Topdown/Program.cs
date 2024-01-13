@@ -18,9 +18,10 @@ int ScorePoints = 0;
 float speed = 8;
 int tilesize = 64;
 int pointsize = 16;
+bool jumping = false;
 bool cameraBool = false;
 bool text = false;
-float gravity = 1.6f;
+float gravity = 2.5f;
 
 Raylib.InitWindow(screenWidth, screenHeight, "Wsg gang :33");
 Raylib.SetTargetFPS(60);
@@ -137,9 +138,14 @@ while (!Raylib.WindowShouldClose())
     {
         movement.X = 1;
     }
-    if (Raylib.IsKeyDown(KeyboardKey.KEY_SPACE))
+    if (isgrounded(charfeet, walls))
+    {
+        jumping = true;
+    }
+    if (Raylib.IsKeyDown(KeyboardKey.KEY_SPACE) && isgrounded(charfeet, walls))
     {
         movement.Y = -1;
+        jumping = false;
     }
     if (Raylib.IsKeyDown(KeyboardKey.KEY_S))
     {
