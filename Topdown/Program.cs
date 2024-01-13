@@ -19,14 +19,16 @@ float speed = 8;
 int tilesize = 64;
 int pointsize = 16;
 bool jumping = false;
-float jump_speed = 50;
+float jump_speed = 20;
 bool cameraBool = false;
 bool text = false;
 float charGravity = 4.5f;
 bool Gravity = false;
+int framerate = 60;
+int airtime = framerate/3;
 
 Raylib.InitWindow(screenWidth, screenHeight, "Wsg gang :33");
-Raylib.SetTargetFPS(60);
+Raylib.SetTargetFPS(framerate);
 
 Color BG = new Color(58, 58, 58, 255);
 Color BLOOD = new Color(136, 8, 8, 255);
@@ -123,12 +125,10 @@ while (!Raylib.WindowShouldClose())
     movement = Vector2.Zero;
 
     bool grounded = isgrounded(charfeet, walls);
-    if (grounded == true){
-        Gravity = false;
-    }
-    if (grounded == false){
-        Gravity = true;
-    }
+    if (grounded == true){Gravity = false;}
+    if (grounded == false){Gravity = true;}
+    if (Gravity == true) {charGravity = 4.5f;}
+    if (Gravity == false) {charGravity = 0;}
 
     if (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT_SHIFT))
     {
@@ -154,10 +154,23 @@ while (!Raylib.WindowShouldClose())
         movement.Y = -1;
         Gravity = true;
     }
-        if (isgrounded(charfeet, walls))
+    if (airtime > 0 && jumping == true)
+    {
+        movement.Y = -1;
+        jump_speed += -1;
+        airtime--;
+    }
+    else if (airtime <=0)
+    {
+        Gravity = true;
+        charGravity += 0.2f;
+    }
+    if (isgrounded(charfeet, walls))
     {
         jumping = false;
         Gravity = false;
+        airtime = framerate/3;
+        jump_speed = 20;
     }
         if (jumping == true)
         {
