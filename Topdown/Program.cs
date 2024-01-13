@@ -19,10 +19,10 @@ float speed = 8;
 int tilesize = 64;
 int pointsize = 16;
 bool jumping = false;
-float jump_speed = 20;
+float jump_speed = 25;
 bool cameraBool = false;
 bool text = false;
-float charGravity = 4.5f;
+float charGravity = 7.0f;
 bool Gravity = false;
 int framerate = 60;
 int airtime = framerate/3;
@@ -34,7 +34,7 @@ Color BG = new Color(58, 58, 58, 255);
 Color BLOOD = new Color(136, 8, 8, 255);
 
 Rectangle characterRect = new Rectangle(320, 320, charWidth, charHeight);
-Rectangle charfeet = new Rectangle(320, 384, charWidth, 5);
+Rectangle charfeet = new Rectangle(320, 384, charWidth, 7);
 Texture2D characterImage = Raylib.LoadTexture("hollowhead.png");
 Texture2D Block = Raylib.LoadTexture("bwblock.png");
 Texture2D Heart = Raylib.LoadTexture("heartPoint.png");
@@ -127,7 +127,7 @@ while (!Raylib.WindowShouldClose())
     bool grounded = isgrounded(charfeet, walls);
     if (grounded == true){Gravity = false;}
     if (grounded == false){Gravity = true;}
-    if (Gravity == true) {charGravity = 4.5f;}
+    if (Gravity == true) {charGravity = 7.0f;}
     if (Gravity == false) {charGravity = 0;}
 
     if (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT_SHIFT))
@@ -157,20 +157,19 @@ while (!Raylib.WindowShouldClose())
     if (airtime > 0 && jumping == true)
     {
         movement.Y = -1;
-        jump_speed += -1;
+        jump_speed += -1f;
         airtime--;
     }
     else if (airtime <=0)
     {
         Gravity = true;
-        charGravity += 0.2f;
     }
     if (isgrounded(charfeet, walls))
     {
         jumping = false;
         Gravity = false;
         airtime = framerate/3;
-        jump_speed = 20;
+        jump_speed = 30;
     }
         if (jumping == true)
         {
