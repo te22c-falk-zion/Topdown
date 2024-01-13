@@ -19,9 +19,11 @@ float speed = 8;
 int tilesize = 64;
 int pointsize = 16;
 bool jumping = false;
+float jump_speed = 50;
 bool cameraBool = false;
 bool text = false;
-float gravity = 2.5f;
+float charGravity = 4.5f;
+bool Gravity = false;
 
 Raylib.InitWindow(screenWidth, screenHeight, "Wsg gang :33");
 Raylib.SetTargetFPS(60);
@@ -30,7 +32,7 @@ Color BG = new Color(58, 58, 58, 255);
 Color BLOOD = new Color(136, 8, 8, 255);
 
 Rectangle characterRect = new Rectangle(320, 320, charWidth, charHeight);
-Rectangle charfeet = new Rectangle(320, 384, charWidth, 1);
+Rectangle charfeet = new Rectangle(320, 384, charWidth, 5);
 Texture2D characterImage = Raylib.LoadTexture("hollowhead.png");
 Texture2D Block = Raylib.LoadTexture("bwblock.png");
 Texture2D Heart = Raylib.LoadTexture("heartPoint.png");
@@ -120,6 +122,14 @@ while (!Raylib.WindowShouldClose())
 {
     movement = Vector2.Zero;
 
+    bool grounded = isgrounded(charfeet, walls);
+    if (grounded == true){
+        Gravity = false;
+    }
+    if (grounded == false){
+        Gravity = true;
+    }
+
     if (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT_SHIFT))
     {
         speed = 11;
@@ -138,15 +148,27 @@ while (!Raylib.WindowShouldClose())
     {
         movement.X = 1;
     }
-    if (isgrounded(charfeet, walls))
+    if (Raylib.IsKeyDown(KeyboardKey.KEY_W) && jumping == false)
     {
         jumping = true;
-    }
-    if (Raylib.IsKeyDown(KeyboardKey.KEY_SPACE) && isgrounded(charfeet, walls))
-    {
         movement.Y = -1;
-        jumping = false;
+        Gravity = true;
     }
+        if (isgrounded(charfeet, walls))
+    {
+        jumping = false;
+        Gravity = false;
+    }
+        if (jumping == true)
+        {
+            Console.WriteLine("jumping is true");
+            
+        }
+        if (jumping == false)
+        {
+            Console.WriteLine("jumping is false");
+            
+        }
     if (Raylib.IsKeyDown(KeyboardKey.KEY_S))
     {
         movement.Y = 1;
@@ -157,7 +179,7 @@ while (!Raylib.WindowShouldClose())
         movement = Vector2.Normalize(movement);
     }
 
-    movement *= speed;
+    movement.X *= speed;
 
     characterRect.x += movement.X;
     charfeet.x += movement.X;
@@ -170,18 +192,18 @@ while (!Raylib.WindowShouldClose())
     
     }
 
-    characterRect.y += movement.Y;
-    characterRect.y += gravity;
-    charfeet.y += movement.Y;
-    charfeet.y += gravity;
+    characterRect.y += movement.Y * jump_speed + charGravity;
+    // characterRect.y += charGravity;
+    charfeet.y += movement.Y * jump_speed + charGravity;
+    // charfeet.y += charGravity;
     // Kolla kollisioner
     if(CheckWallCollision(characterRect, walls))
     {
         
-        characterRect.y -= movement.Y;
-        characterRect.y -= gravity;
-        charfeet.y -= movement.Y;
-        charfeet.y -= gravity;
+        characterRect.y -= movement.Y * jump_speed + charGravity;
+        // characterRect.y -= charGravity;
+        charfeet.y -= movement.Y * jump_speed + charGravity;
+        // charfeet.y -= charGravity;
     }
 
         Rectangle pointRect = CheckPointCollision(characterRect, points);
@@ -257,6 +279,7 @@ while (!Raylib.WindowShouldClose())
         }
 
         Raylib.DrawTexture(characterImage, (int)characterRect.x, (int)characterRect.y, Color.WHITE);
+        Raylib.DrawRectangleRec(charfeet, color:Color.BLACK);
 
         
         if (text == true)
