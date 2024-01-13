@@ -318,3 +318,16 @@ static Rectangle CheckPointCollision(Rectangle characterRect, List<Rectangle> po
 
     return new Rectangle();
 }
+
+static bool isgrounded(Rectangle charfeet, List<Rectangle> walls)
+{
+    foreach (Rectangle r in walls)
+    {
+        if (Raylib.CheckCollisionRecs(charfeet, r))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
