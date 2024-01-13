@@ -20,9 +20,7 @@ int tilesize = 64;
 int pointsize = 16;
 bool cameraBool = false;
 bool text = false;
-float playerGravity = 9.8f;
-bool gravity = true;
-bool grounded = false;
+float gravity = 1.6f;
 
 Raylib.InitWindow(screenWidth, screenHeight, "Wsg gang :33");
 Raylib.SetTargetFPS(60);
@@ -30,7 +28,8 @@ Raylib.SetTargetFPS(60);
 Color BG = new Color(58, 58, 58, 255);
 Color BLOOD = new Color(136, 8, 8, 255);
 
-Rectangle characterRect = new Rectangle(screenWidth/2, screenHeight/2, charWidth, charHeight);
+Rectangle characterRect = new Rectangle(320, 320, charWidth, charHeight);
+Rectangle charfeet = new Rectangle(320, 384, charWidth, 1);
 Texture2D characterImage = Raylib.LoadTexture("hollowhead.png");
 Texture2D Block = Raylib.LoadTexture("bwblock.png");
 Texture2D Heart = Raylib.LoadTexture("heartPoint.png");
@@ -46,7 +45,7 @@ int[,] mapData = {
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {0,0,3,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {2,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {0,0,0,0,0,0,0,0,0,0,3,0,2,0,0,0,0,0,0,0,0,0,0,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -120,6 +119,16 @@ while (!Raylib.WindowShouldClose())
 {
     movement = Vector2.Zero;
 
+    if (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT_SHIFT))
+    {
+        speed = 11;
+        camera.zoom = 0.98f;
+    }
+    else 
+    {
+        speed = 8;
+        camera.zoom = 1.0f;
+    }
     if (Raylib.IsKeyDown(KeyboardKey.KEY_A))
     {
         movement.X = -1;
@@ -128,7 +137,7 @@ while (!Raylib.WindowShouldClose())
     {
         movement.X = 1;
     }
-    if (Raylib.IsKeyDown(KeyboardKey.KEY_W))
+    if (Raylib.IsKeyDown(KeyboardKey.KEY_SPACE))
     {
         movement.Y = -1;
     }
@@ -145,22 +154,28 @@ while (!Raylib.WindowShouldClose())
     movement *= speed;
 
     characterRect.x += movement.X;
+    charfeet.x += movement.X;
     // Kolla kollisioner
     if(CheckWallCollision(characterRect, walls))
     {
         
         characterRect.x -= movement.X;
+        charfeet.x -= movement.X;
     
     }
 
     characterRect.y += movement.Y;
-    // characterRect.y -= gravity;
+    characterRect.y += gravity;
+    charfeet.y += movement.Y;
+    charfeet.y += gravity;
     // Kolla kollisioner
     if(CheckWallCollision(characterRect, walls))
     {
         
         characterRect.y -= movement.Y;
-        // characterRect.y += gravity;
+        characterRect.y -= gravity;
+        charfeet.y -= movement.Y;
+        charfeet.y -= gravity;
     }
 
         Rectangle pointRect = CheckPointCollision(characterRect, points);
@@ -210,8 +225,6 @@ while (!Raylib.WindowShouldClose())
             scene = "game";
             cameraBool = true;
             ScorePoints = 0;
-            characterRect.x = 320;
-            characterRect.y = 320;
             text = true;
         }
     }
@@ -225,10 +238,8 @@ while (!Raylib.WindowShouldClose())
         }
         Raylib.ClearBackground(BG);
 
-        // for (int i = 0; i < walls.Count; i++)
-        // {
-        //     Raylib.DrawRectangleRec(walls[i], Color.BLACK);
-        // }
+
+
 
         for (int y = 0; y < mapData.GetLength(0); y++)
         {
