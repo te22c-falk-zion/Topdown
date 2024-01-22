@@ -28,7 +28,8 @@ int framerate = 60;
 int airtime = framerate/3;
 bool speeded = false;
 int speedtime = 420;
-int waittime = 300;
+int waittime = 180;
+int doublesize = 32;
 
 Raylib.InitWindow(screenWidth, screenHeight, "Wsg gang :33");
 Raylib.SetTargetFPS(framerate);
@@ -45,6 +46,7 @@ Texture2D Skull = Raylib.LoadTexture("skullGoal.png");
 Texture2D brickBG = Raylib.LoadTexture("brickBG.png");
 Texture2D jumppad = Raylib.LoadTexture("jump.png");
 Texture2D speedb = Raylib.LoadTexture("speed.png");
+Texture2D doubleJ = Raylib.LoadTexture("Up_arrow.png");
 // List<Texture2D> textures = new();
 // textures.Add(Raylib.LoadTexture("heartPoint.png"));
 
@@ -52,7 +54,7 @@ Texture2D speedb = Raylib.LoadTexture("speed.png");
 int[,] mapData = {
     {0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {0,0,3,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {0,0,0,0,0,0,0,5,0,0,3,0,2,0,0,0,0,0,0,0,0,0,0,1},
@@ -138,6 +140,20 @@ List<Rectangle> speeds = new();
         }
     }
 }
+List<Rectangle> doubles = new();
+{
+    for (int y = 0; y < mapData.GetLength(0); y++)
+    {
+        for (int x = 0; x < mapData.GetLength(1); x++)
+        {
+            if (mapData[y, x] == 6)
+            {
+                Rectangle d = new Rectangle(x * tilesize, y * tilesize, doublesize, doublesize);
+                doubles.Add(d);
+            }
+        }
+    }
+}
 Vector2 movement = new Vector2(0.1f, 0.1f);
 
 Vector2 size = new Vector2(50, 50);
@@ -156,11 +172,13 @@ while (!Raylib.WindowShouldClose())
     movement = Vector2.Zero;
 
     bool grounded = isgrounded(charfeet, walls);
+    // bool doubleCan = doublejump(characterRect, doubles);
     if (grounded == true){Gravity = false;}
     if (grounded == false){Gravity = true;}
     if (Gravity == true) {charGravity = 8.0f;}
     if (Gravity == false) {charGravity = 0;}
-    bool boosted = isboosted(charfeet, pads);
+    // if (doubleCan == true){jumping = false;}
+
 
     Rectangle pointRect = CheckPointCollision(characterRect, points);
     if (pointRect.width != 0)
@@ -182,7 +200,7 @@ while (!Raylib.WindowShouldClose())
     Rectangle speedRect = CheckSpeedCollision(characterRect, speeds);
     if (speedRect.width != 0)
     {
-        points.Remove(speedRect);
+        speeds.Remove(speedRect);
     
         for (int y = 0; y < mapData.GetLength(0); y++)
         {
@@ -191,30 +209,17 @@ while (!Raylib.WindowShouldClose())
                 if (mapData[(int)speedRect.y/tilesize,(int)speedRect.x/tilesize] == 5)
                 {
                 mapData[(int)speedRect.y/tilesize,(int)speedRect.x/tilesize] = 0;
+                speedtime =  420;
                 speeded = true;
-                }
-                if (mapData[(int)speedRect.y/tilesize,(int)speedRect.x/tilesize] == 0 && speedtime <= 0)
-                {
-                    mapData[(int)speedRect.y/tilesize,(int)speedRect.x/tilesize] = 5;
                 }
             }
         }
     }
-
     if(speeded == true)
     {
         speed = 13;
         camera.zoom = 0.975f;
         speedtime--;
-        if (speedtime <= 0)
-        {
-            // speeded = false;
-            // waittime--;
-            // if {waittime <= 0}
-            // {
-            //     speedtime = 420;
-            // }
-        }
     }
     else if (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT_SHIFT))
     {
@@ -225,6 +230,11 @@ while (!Raylib.WindowShouldClose())
     {
         speed = 8;
         camera.zoom = 1.0f;
+    }
+    if (speedtime <= 0)
+    {
+        speeded = false;
+        waittime--;
     }
     if (Raylib.IsKeyDown(KeyboardKey.KEY_A))
     {
@@ -372,6 +382,11 @@ while (!Raylib.WindowShouldClose())
                     Raylib.DrawTexture(brickBG, x * tilesize, y * tilesize, Color.WHITE);
                     Raylib.DrawTexture(speedb,x * tilesize, y * tilesize,Color.WHITE);
                 }
+                 if (mapData[y, x] == 6)
+                {
+                    Raylib.DrawTexture(brickBG, x * tilesize, y * tilesize, Color.WHITE);
+                    Raylib.DrawTexture(doubleJ,x * tilesize, y * tilesize,Color.WHITE);
+                }
             }
         }
 
@@ -451,16 +466,6 @@ static Rectangle CheckPointCollision(Rectangle characterRect, List<Rectangle> po
 
     return new Rectangle();
 }
-// static bool isspeeded (Rectangle characterRect, List<Rectangle> speeds)
-// {
-//     foreach (Rectangle s in speeds)
-//     {
-//         if (Raylib.CheckCollisionRecs(characterRect, s))
-//         {
-//             return true;
-//         }
-//     }
-// }
 static Rectangle CheckSpeedCollision(Rectangle characterRect, List<Rectangle> speeds)
 {
     foreach (Rectangle s in speeds)
@@ -498,3 +503,14 @@ static bool isboosted(Rectangle charfeet, List<Rectangle> pads)
     }
     return false;
 }
+// static bool doublejump(Rectangle characherRect, List<Rectangle> doubles)
+// {
+//     foreach (Rectangle d in doubles)
+//     {
+//         if (Raylib.CheckCollisionRecs(characherRect, d))
+//         {
+//             return true;
+//         }
+//     }
+//     return false;
+// }
