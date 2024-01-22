@@ -26,6 +26,9 @@ float charGravity = 7.0f;
 bool Gravity = false;
 int framerate = 60;
 int airtime = framerate/3;
+bool speeded = false;
+int speedtime = 420;
+int waittime = 300;
 
 Raylib.InitWindow(screenWidth, screenHeight, "Wsg gang :33");
 Raylib.SetTargetFPS(framerate);
@@ -34,24 +37,26 @@ Color BG = new Color(58, 58, 58, 255);
 Color BLOOD = new Color(136, 8, 8, 255);
 
 Rectangle characterRect = new Rectangle(320, 320, charWidth, charHeight);
-Rectangle charfeet = new Rectangle(320, 384, charWidth, 7);
+Rectangle charfeet = new Rectangle(320, 384, charWidth, 8);
 Texture2D characterImage = Raylib.LoadTexture("hollowhead.png");
 Texture2D Block = Raylib.LoadTexture("bwblock.png");
 Texture2D Heart = Raylib.LoadTexture("heartPoint.png");
 Texture2D Skull = Raylib.LoadTexture("skullGoal.png");
 Texture2D brickBG = Raylib.LoadTexture("brickBG.png");
+Texture2D jumppad = Raylib.LoadTexture("jump.png");
+Texture2D speedb = Raylib.LoadTexture("speed.png");
 // List<Texture2D> textures = new();
 // textures.Add(Raylib.LoadTexture("heartPoint.png"));
 
 
 int[,] mapData = {
-    {0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {0,0,3,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {0,0,0,0,0,0,0,0,0,0,3,0,2,0,0,0,0,0,0,0,0,0,0,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {0,0,0,0,0,0,0,5,0,0,3,0,2,0,0,0,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,4,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -101,12 +106,38 @@ List<Rectangle> points = new();
             {
                 Rectangle p = new Rectangle(x * tilesize, y * tilesize, pointsize, pointsize);
                 points.Add(p);
-
             }
         }
     }
 }
-
+List<Rectangle> pads = new();
+{
+    for (int y = 0; y < mapData.GetLength(0); y++)
+    {
+        for (int x = 0; x < mapData.GetLength(1); x++)
+        {
+            if (mapData[y, x] == 4)
+            {
+                Rectangle b = new Rectangle(x * tilesize, y * tilesize, tilesize, tilesize);
+                pads.Add(b);
+            }
+        }
+    }
+}
+List<Rectangle> speeds = new();
+{
+    for (int y = 0; y < mapData.GetLength(0); y++)
+    {
+        for (int x = 0; x < mapData.GetLength(1); x++)
+        {
+            if (mapData[y, x] == 5)
+            {
+                Rectangle s = new Rectangle(x * tilesize, y * tilesize, pointsize, pointsize);
+                speeds.Add(s);
+            }
+        }
+    }
+}
 Vector2 movement = new Vector2(0.1f, 0.1f);
 
 Vector2 size = new Vector2(50, 50);
@@ -127,10 +158,65 @@ while (!Raylib.WindowShouldClose())
     bool grounded = isgrounded(charfeet, walls);
     if (grounded == true){Gravity = false;}
     if (grounded == false){Gravity = true;}
-    if (Gravity == true) {charGravity = 7.0f;}
+    if (Gravity == true) {charGravity = 8.0f;}
     if (Gravity == false) {charGravity = 0;}
+    bool boosted = isboosted(charfeet, pads);
 
-    if (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT_SHIFT))
+    Rectangle pointRect = CheckPointCollision(characterRect, points);
+    if (pointRect.width != 0)
+    {
+        ScorePoints = ScorePoints + 1;
+        points.Remove(pointRect);
+    
+        for (int y = 0; y < mapData.GetLength(0); y++)
+        {
+            for (int x = 0; x < mapData.GetLength(1); x++)
+            {
+                if (mapData[(int)pointRect.y/tilesize,(int)pointRect.x/tilesize] == 3)
+                {
+                mapData[(int)pointRect.y/tilesize,(int)pointRect.x/tilesize] = 0;
+                } 
+            }
+        }
+    }
+    Rectangle speedRect = CheckSpeedCollision(characterRect, speeds);
+    if (speedRect.width != 0)
+    {
+        points.Remove(speedRect);
+    
+        for (int y = 0; y < mapData.GetLength(0); y++)
+        {
+            for (int x = 0; x < mapData.GetLength(1); x++)
+            {
+                if (mapData[(int)speedRect.y/tilesize,(int)speedRect.x/tilesize] == 5)
+                {
+                mapData[(int)speedRect.y/tilesize,(int)speedRect.x/tilesize] = 0;
+                speeded = true;
+                }
+                if (mapData[(int)speedRect.y/tilesize,(int)speedRect.x/tilesize] == 0 && speedtime <= 0)
+                {
+                    mapData[(int)speedRect.y/tilesize,(int)speedRect.x/tilesize] = 5;
+                }
+            }
+        }
+    }
+
+    if(speeded == true)
+    {
+        speed = 13;
+        camera.zoom = 0.975f;
+        speedtime--;
+        if (speedtime <= 0)
+        {
+            // speeded = false;
+            // waittime--;
+            // if {waittime <= 0}
+            // {
+            //     speedtime = 420;
+            // }
+        }
+    }
+    else if (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT_SHIFT))
     {
         speed = 11;
         camera.zoom = 0.98f;
@@ -148,7 +234,7 @@ while (!Raylib.WindowShouldClose())
     {
         movement.X = 1;
     }
-    if (Raylib.IsKeyDown(KeyboardKey.KEY_W) && jumping == false)
+    if (Raylib.IsKeyDown(KeyboardKey.KEY_SPACE) && jumping == false)
     {
         jumping = true;
         movement.Y = -1;
@@ -169,7 +255,14 @@ while (!Raylib.WindowShouldClose())
         jumping = false;
         Gravity = false;
         airtime = framerate/3;
-        jump_speed = 30;
+        jump_speed = 28;
+    }
+    if (isboosted(charfeet, pads))
+    {
+        jumping = false;
+        Gravity = false;
+        airtime = framerate/3;
+        jump_speed = 40;
     }
         if (jumping == true)
         {
@@ -186,17 +279,17 @@ while (!Raylib.WindowShouldClose())
         movement.Y = 1;
     }
 
-    if (movement.Length() > 0)
-    {
-        movement = Vector2.Normalize(movement);
-    }
+    // if (movement.Length() > 0)
+    // {
+    //     movement = Vector2.Normalize(movement);
+    // }
 
     movement.X *= speed;
 
     characterRect.x += movement.X;
     charfeet.x += movement.X;
     // Kolla kollisioner
-    if(CheckWallCollision(characterRect, walls))
+    if(CheckWallCollision(characterRect, walls, pads))
     {
         
         characterRect.x -= movement.X;
@@ -209,7 +302,7 @@ while (!Raylib.WindowShouldClose())
     charfeet.y += movement.Y * jump_speed + charGravity;
     // charfeet.y += charGravity;
     // Kolla kollisioner
-    if(CheckWallCollision(characterRect, walls))
+    if(CheckWallCollision(characterRect, walls, pads))
     {
         
         characterRect.y -= movement.Y * jump_speed + charGravity;
@@ -217,24 +310,7 @@ while (!Raylib.WindowShouldClose())
         charfeet.y -= movement.Y * jump_speed + charGravity;
         // charfeet.y -= charGravity;
     }
-
-        Rectangle pointRect = CheckPointCollision(characterRect, points);
-        if (pointRect.width != 0)
-        {
-            ScorePoints = ScorePoints + 1;
-            points.Remove(pointRect);
         
-            for (int y = 0; y < mapData.GetLength(0); y++)
-            {
-                for (int x = 0; x < mapData.GetLength(1); x++)
-                {
-                    if (mapData[(int)pointRect.y/tilesize,(int)pointRect.x/tilesize] == 3)
-                    {
-                    mapData[(int)pointRect.y/tilesize,(int)pointRect.x/tilesize] = 0;
-                    } 
-                }
-            }
-        }
 
     Raylib.BeginDrawing();
 
@@ -287,6 +363,15 @@ while (!Raylib.WindowShouldClose())
                 {
                     Raylib.DrawTexture(Heart,x * tilesize, y * tilesize,Color.WHITE);
                 }
+                if (mapData[y, x] == 4)
+                {
+                    Raylib.DrawTexture(jumppad,x * tilesize, y * tilesize,Color.WHITE);
+                }
+                if (mapData[y, x] == 5)
+                {
+                    Raylib.DrawTexture(brickBG, x * tilesize, y * tilesize, Color.WHITE);
+                    Raylib.DrawTexture(speedb,x * tilesize, y * tilesize,Color.WHITE);
+                }
             }
         }
 
@@ -334,11 +419,18 @@ while (!Raylib.WindowShouldClose())
     Raylib.EndDrawing();
 }
 
-static bool CheckWallCollision(Rectangle characterRect, List<Rectangle> walls)
+static bool CheckWallCollision(Rectangle characterRect, List<Rectangle> walls, List<Rectangle> pads)
 {
     foreach (Rectangle r in walls)
     {
         if (Raylib.CheckCollisionRecs(characterRect, r))
+        {
+            return true;
+        }
+    }
+    foreach (Rectangle b in pads)
+    {
+        if (Raylib.CheckCollisionRecs(characterRect, b))
         {
             return true;
         }
@@ -359,6 +451,28 @@ static Rectangle CheckPointCollision(Rectangle characterRect, List<Rectangle> po
 
     return new Rectangle();
 }
+// static bool isspeeded (Rectangle characterRect, List<Rectangle> speeds)
+// {
+//     foreach (Rectangle s in speeds)
+//     {
+//         if (Raylib.CheckCollisionRecs(characterRect, s))
+//         {
+//             return true;
+//         }
+//     }
+// }
+static Rectangle CheckSpeedCollision(Rectangle characterRect, List<Rectangle> speeds)
+{
+    foreach (Rectangle s in speeds)
+    {
+        if (Raylib.CheckCollisionRecs(characterRect, s))
+        {
+            return s;
+        }
+    }
+
+    return new Rectangle();
+}
 
 static bool isgrounded(Rectangle charfeet, List<Rectangle> walls)
 {
@@ -369,6 +483,18 @@ static bool isgrounded(Rectangle charfeet, List<Rectangle> walls)
             return true;
         }
     }
+    
 
+    return false;
+}
+static bool isboosted(Rectangle charfeet, List<Rectangle> pads)
+{
+    foreach (Rectangle b in pads)
+    {
+        if (Raylib.CheckCollisionRecs(charfeet, b))
+        {
+            return true;
+        }
+    }
     return false;
 }

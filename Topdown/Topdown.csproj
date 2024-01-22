@@ -12,7 +12,9 @@
   <Content Include="bwblock.png" CopyToOutputDirectory="always" />
   <Content Include="heartPoint.png" CopyToOutputDirectory="always" />
   <Content Include="skullGoal.png" CopyToOutputDirectory="always" />
-  <Content Include="brickBG.png" CopyToOutputDirectory="always" />  
+  <Content Include="brickBG.png" CopyToOutputDirectory="always" />
+  <Content Include="jump.png" CopyToOutputDirectory="always" /> 
+  <Content Include="speed.png" CopyToOutputDirectory="always" />  
   </ItemGroup>
   
   <ItemGroup>
