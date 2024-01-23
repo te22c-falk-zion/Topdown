@@ -38,8 +38,8 @@ Raylib.SetTargetFPS(framerate);
 Color BG = new Color(58, 58, 58, 255);
 Color BLOOD = new Color(136, 8, 8, 255);
 
-Rectangle characterRect = new Rectangle(320, 320, charWidth, charHeight);
-Rectangle charfeet = new Rectangle(320, 384, charWidth, 8);
+Rectangle characterRect = new Rectangle(448, 448, charWidth, charHeight);
+Rectangle charfeet = new Rectangle(448, 512, charWidth, 8);
 Texture2D characterImage = Raylib.LoadTexture("hollowhead.png");
 Texture2D Block = Raylib.LoadTexture("bwblock.png");
 Texture2D Heart = Raylib.LoadTexture("heartPoint.png");
@@ -330,18 +330,14 @@ while (!Raylib.WindowShouldClose())
     if (scene == "start")
     {
         Raylib.DrawText("Welcome oh honourless...The trials await you", 80, 40, 30, BLOOD);
-        Raylib.DrawText("Press [space] to begin your ordeal", 120, 100, 30, BLOOD);
+        Raylib.DrawText("Press [Q] to begin your ordeal", 120, 100, 30, BLOOD);
         Raylib.DrawText("Do your best to humour us...", 160, 350, 30, BLOOD);
-        if (Raylib.IsKeyPressed(KeyboardKey.KEY_SPACE))
+        if (Raylib.IsKeyPressed(KeyboardKey.KEY_Q))
         {
             scene = "game";
             cameraBool = true;
             ScorePoints = 0;
             text = true;
-            characterRect.x = 320;
-            characterRect. y = 320;
-            charfeet.x = 320;
-            charfeet.y = 384;
         }
     }
 
