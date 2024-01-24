@@ -27,6 +27,7 @@ bool Gravity = false;
 int framerate = 60;
 int airtime = framerate/3;
 bool speeded = false;
+bool candoublejump = false;
 int speedtime = 420;
 int waittime = 180;
 int doublesize = 32;
@@ -57,7 +58,7 @@ int[,] mapData = {
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1},
@@ -179,12 +180,13 @@ while (!Raylib.WindowShouldClose())
     movement = Vector2.Zero;
 
     bool grounded = isgrounded(charfeet, walls);
-    // bool doubleCan = doublejump(characterRect, doubles);
+    bool doubleCan = doublejump(characterRect, doubles);
     if (grounded == true){Gravity = false;}
     if (grounded == false){Gravity = true;}
     if (Gravity == true) {charGravity = 8.0f;}
     if (Gravity == false) {charGravity = 0;}
-    // if (doubleCan == true){jumping = false;}
+    if (doubleCan == true){candoublejump = true;}
+    if (doubleCan == false){candoublejump = false;}
 
 
     Rectangle pointRect = CheckPointCollision(characterRect, points);
@@ -270,6 +272,13 @@ while (!Raylib.WindowShouldClose())
     else if (airtime <=0)
     {
         Gravity = true;
+    }
+    if (Raylib.IsKeyDown(KeyboardKey.KEY_SPACE) && candoublejump == true)
+    {
+        movement.Y = -1;
+        jump_speed = 28;
+        jump_speed += -1f;
+        airtime = framerate/3;
     }
     if (isgrounded(charfeet, walls))
     {
@@ -556,14 +565,14 @@ static bool isboosted(Rectangle charfeet, List<Rectangle> pads)
     }
     return false;
 }
-// static bool doublejump(Rectangle characherRect, List<Rectangle> doubles)
-// {
-//     foreach (Rectangle d in doubles)
-//     {
-//         if (Raylib.CheckCollisionRecs(characherRect, d))
-//         {
-//             return true;
-//         }
-//     }
-//     return false;
-// }
+static bool doublejump(Rectangle characherRect, List<Rectangle> doubles)
+{
+    foreach (Rectangle d in doubles)
+    {
+        if (Raylib.CheckCollisionRecs(characherRect, d))
+        {
+            return true;
+        }
+    }
+    return false;
+}
