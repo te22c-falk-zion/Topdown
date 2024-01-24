@@ -31,6 +31,7 @@ int speedtime = 420;
 int waittime = 180;
 int doublesize = 32;
 int gametime = 300;
+int restartY = 1088;
 
 Raylib.InitWindow(screenWidth, screenHeight, "Wsg gang :33");
 Raylib.SetTargetFPS(framerate);
@@ -286,12 +287,12 @@ while (!Raylib.WindowShouldClose())
     }
         if (jumping == true)
         {
-            Console.WriteLine("jumping is true");
+            Console.WriteLine($"jumping is true {characterRect.y}");
             
         }
         if (jumping == false)
         {
-            Console.WriteLine("jumping is false");
+            Console.WriteLine($"jumping is false {characterRect.y}");
             
         }
     if (Raylib.IsKeyDown(KeyboardKey.KEY_S))
@@ -320,6 +321,13 @@ while (!Raylib.WindowShouldClose())
         
         characterRect.y -= movement.Y * jump_speed + charGravity;
         charfeet.y -= movement.Y * jump_speed + charGravity;
+    }
+    if (characterRect.y >= restartY)
+    {
+        characterRect.x = 448;
+        characterRect.y = 448;
+        charfeet.x = 448;
+        charfeet.y = 512;
     }
         
 
