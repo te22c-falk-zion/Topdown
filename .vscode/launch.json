@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "name": "C#: Topdown",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}\\Topdown\\Topdown.csproj",
+            "launchConfigurationId": "TargetFramework=;Topdown"
+        }
+    ]
+}

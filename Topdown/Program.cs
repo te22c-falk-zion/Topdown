@@ -9,39 +9,53 @@ using System.Threading.Tasks.Dataflow;
 
 Random generator = new Random();
 
+// ints, bools, strings, floats
 int screenWidth = 900;
 int screenHeight = 650;
 int charHeight = 64;
 int charWidth = 54;
-string scene = "start";
-int ScorePoints = 0;
-float speed = 8;
-int tilesize = 64;
-int pointsize = 16;
-bool jumping = false;
-float jump_speed = 25;
-bool cameraBool = false;
-bool text = false;
-float charGravity = 7.0f;
-bool Gravity = false;
-int framerate = 60;
-int airtime = framerate/3;
-bool speeded = false;
-bool candoublejump = false;
 int speedtime = 420;
 int waittime = 180;
 int doublesize = 32;
 int gametime = 300;
 int restartY = 1088;
+int tilesize = 64;
+int pointsize = 16;
+int ScorePoints = 0;
+int framerate = 60;
+int airtime = framerate/3;
 
-Raylib.InitWindow(screenWidth, screenHeight, "Wsg gang :33");
-Raylib.SetTargetFPS(framerate);
+bool jumping = false;
+bool cameraBool = false;
+bool text = false;
+bool Gravity = false;
+bool speeded = false;
+bool candoublejump = false;
 
+float charGravity = 7.0f;
+float jump_speed = 25;
+float speed = 8;
+string scene = "start";
+
+// Färger
 Color BG = new Color(58, 58, 58, 255);
 Color BLOOD = new Color(136, 8, 8, 255);
 
+// Init
+Raylib.InitWindow(screenWidth, screenHeight, "Wsg gang :33");
+Raylib.SetTargetFPS(framerate);
+
+// Camera init
+Camera2D camera = new Camera2D();
+camera.offset = new Vector2(screenWidth / 2.0f, screenHeight / 2.0f);
+camera.rotation = 0.0f;
+camera.zoom = 1.0f;
+
+// Charactär
 Rectangle characterRect = new Rectangle(448, 448, charWidth, charHeight);
 Rectangle charfeet = new Rectangle(448, 512, charWidth, 8);
+
+// Bilder
 Texture2D characterImage = Raylib.LoadTexture("hollowhead.png");
 Texture2D Block = Raylib.LoadTexture("bwblock.png");
 Texture2D Heart = Raylib.LoadTexture("heartPoint.png");
@@ -51,7 +65,19 @@ Texture2D jumppad = Raylib.LoadTexture("jump.png");
 Texture2D speedb = Raylib.LoadTexture("speed.png");
 Texture2D doubleJ = Raylib.LoadTexture("Up_arrow.png");
 
+// Map content
+List<Rectangle> walls = new();
+List<Rectangle> goals = new();
+List<Rectangle> points = new();
+List<Rectangle> pads = new();
+List<Rectangle> speeds = new();
+List<Rectangle> doubles = new();
+List<Rectangle> enemies = new();
+List<Rectangle> removables = new();
+List<Rectangle> collidables = new();
+List<Rectangle> effects = new();
 
+// Map
 int[,] mapData = {
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -60,7 +86,7 @@ int[,] mapData = {
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0},
+    {3,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,0,1,1,1,1,1,1,1,1},
     {0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0},
@@ -78,7 +104,7 @@ int[,] mapData = {
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 };
 
-List<Rectangle> walls = new();
+// Map code
 {
     for (int y = 0; y < mapData.GetLength(0); y++)
     {
@@ -88,99 +114,52 @@ List<Rectangle> walls = new();
             {
                 Rectangle r = new Rectangle(x * tilesize, y * tilesize, tilesize, tilesize);
                 walls.Add(r);
+                collidables.Add(r);
             }
-        }
-    }
-}
-List<Rectangle> goals = new();
-{
-    for (int y = 0; y < mapData.GetLength(0); y++)
-    {
-        for (int x = 0; x < mapData.GetLength(1); x++)
-        {
             if (mapData[y, x] == 2)
             {
                 Rectangle g = new Rectangle(x * tilesize, y * tilesize, tilesize, tilesize);
                 goals.Add(g);
             }
-        }
-    }
-}
-List<Rectangle> points = new();
-{
-    for (int y = 0; y < mapData.GetLength(0); y++)
-    {
-        for (int x = 0; x < mapData.GetLength(1); x++)
-        {
             if (mapData[y, x] == 3)
             {
                 Rectangle p = new Rectangle(x * tilesize, y * tilesize, pointsize, pointsize);
                 points.Add(p);
             }
-        }
-    }
-}
-List<Rectangle> pads = new();
-{
-    for (int y = 0; y < mapData.GetLength(0); y++)
-    {
-        for (int x = 0; x < mapData.GetLength(1); x++)
-        {
             if (mapData[y, x] == 4)
             {
                 Rectangle b = new Rectangle(x * tilesize, y * tilesize, tilesize, tilesize);
                 pads.Add(b);
+                collidables.Add(b);
             }
-        }
-    }
-}
-List<Rectangle> speeds = new();
-{
-    for (int y = 0; y < mapData.GetLength(0); y++)
-    {
-        for (int x = 0; x < mapData.GetLength(1); x++)
-        {
             if (mapData[y, x] == 5)
             {
                 Rectangle s = new Rectangle(x * tilesize, y * tilesize, pointsize, pointsize);
                 speeds.Add(s);
             }
-        }
-    }
-}
-List<Rectangle> doubles = new();
-{
-    for (int y = 0; y < mapData.GetLength(0); y++)
-    {
-        for (int x = 0; x < mapData.GetLength(1); x++)
-        {
             if (mapData[y, x] == 6)
             {
-                Rectangle d = new Rectangle(x * tilesize, y * tilesize, doublesize, doublesize);
+                Rectangle d = new Rectangle(x * tilesize, y * tilesize, pointsize, pointsize);
                 doubles.Add(d);
+            }
+            if (mapData[y, x] == 7)
+            {
+                Rectangle e = new Rectangle(x * tilesize, y * tilesize, doublesize, doublesize);
+                enemies.Add(e);
             }
         }
     }
 }
-Vector2 movement = new Vector2(0.1f, 0.1f);
 
-Vector2 size = new Vector2(50, 50);
-Rectangle goal = new Rectangle(100, 100, 50, 50);
-Rectangle point = new Rectangle(125, 500, 15, 15);
-
-
-Camera2D camera = new Camera2D();
-camera.offset = new Vector2(screenWidth / 2.0f, screenHeight / 2.0f);
-camera.rotation = 0.0f;
-camera.zoom = 1.0f;
 
 
 while (!Raylib.WindowShouldClose())
 {
+    Vector2 movement = new Vector2(0.1f, 0.1f);
     movement = Vector2.Zero;
 
-    bool grounded = isgrounded(charfeet, walls);
-    bool doubleCan = doublejump(characterRect, doubles);
+    bool grounded = FeetCollision(charfeet, walls);
+    bool doubleCan = CheckWallCollision(characterRect, doubles);
     if (grounded == true){Gravity = false;}
     if (grounded == false){Gravity = true;}
     if (Gravity == true) {charGravity = 8.0f;}
@@ -189,7 +168,7 @@ while (!Raylib.WindowShouldClose())
     if (doubleCan == false){candoublejump = false;}
 
 
-    Rectangle pointRect = CheckPointCollision(characterRect, points);
+    Rectangle pointRect = CheckCollision(characterRect, points);
     if (pointRect.width != 0)
     {
         ScorePoints = ScorePoints + 1;
@@ -206,7 +185,10 @@ while (!Raylib.WindowShouldClose())
             }
         }
     }
-    Rectangle speedRect = CheckSpeedCollision(characterRect, speeds);
+
+
+
+    Rectangle speedRect = CheckCollision(characterRect, speeds);
     if (speedRect.width != 0)
     {
         speeds.Remove(speedRect);
@@ -224,6 +206,7 @@ while (!Raylib.WindowShouldClose())
             }
         }
     }
+
     if(speeded == true)
     {
         speed = 13;
@@ -245,15 +228,21 @@ while (!Raylib.WindowShouldClose())
         speeded = false;
         waittime--;
     }
-    if (Raylib.IsKeyDown(KeyboardKey.KEY_A))
+
+    
+    if (Raylib.IsKeyDown(KeyboardKey.KEY_A) && scene == "game")
     {
         movement.X = -1;
     }
-    if (Raylib.IsKeyDown(KeyboardKey.KEY_D))
+    if (Raylib.IsKeyDown(KeyboardKey.KEY_D) && scene == "game")
     {
         movement.X = 1;
     }
-    if (Raylib.IsKeyDown(KeyboardKey.KEY_SPACE) && jumping == false)
+    if (Raylib.IsKeyDown(KeyboardKey.KEY_S) && scene == "game")
+    {
+        movement.Y = 1;
+    }
+    if (Raylib.IsKeyDown(KeyboardKey.KEY_SPACE) && jumping == false && scene == "game")
     {
         jumping = true;
         movement.Y = -1;
@@ -276,33 +265,29 @@ while (!Raylib.WindowShouldClose())
         jump_speed += -1f;
         airtime = framerate/3;
     }
-    if (isgrounded(charfeet, walls))
+    if (FeetCollision(charfeet, walls))
     {
         jumping = false;
         Gravity = false;
         airtime = framerate/3;
         jump_speed = 28;
     }
-    if (isboosted(charfeet, pads))
+    if (FeetCollision(charfeet, pads))
     {
         jumping = false;
         Gravity = false;
         airtime = framerate/3;
         jump_speed = 40;
     }
-        if (jumping == true)
-        {
-            Console.WriteLine($"jumping is true {characterRect.y}");
-            
-        }
-        if (jumping == false)
-        {
-            Console.WriteLine($"jumping is false {characterRect.y}");
-            
-        }
-    if (Raylib.IsKeyDown(KeyboardKey.KEY_S))
+    if (jumping == true)
     {
-        movement.Y = 1;
+        Console.WriteLine($"jumping is true {characterRect.y}");
+            
+     }
+    if (jumping == false)
+    {
+        Console.WriteLine($"jumping is false {characterRect.y}");
+            
     }
 
     movement.X *= speed;
@@ -310,7 +295,11 @@ while (!Raylib.WindowShouldClose())
     characterRect.x += movement.X;
     charfeet.x += movement.X;
 
-    if(CheckWallCollision(characterRect, walls, pads))
+    characterRect.y += movement.Y * jump_speed + charGravity;
+    charfeet.y += movement.Y * jump_speed + charGravity;
+
+    // Retract movement into walls on the x axis
+    if(CheckWallCollision(characterRect, collidables))
     {
         
         characterRect.x -= movement.X;
@@ -318,15 +307,15 @@ while (!Raylib.WindowShouldClose())
     
     }
 
-    characterRect.y += movement.Y * jump_speed + charGravity;
-    charfeet.y += movement.Y * jump_speed + charGravity;
-
-    if(CheckWallCollision(characterRect, walls, pads))
+    // retract movement into walls on the y axis
+    if(CheckWallCollision(characterRect, collidables))
     {
         
         characterRect.y -= movement.Y * jump_speed + charGravity;
         charfeet.y -= movement.Y * jump_speed + charGravity;
     }
+
+    // If the chachater is below the map then reset their position
     if (characterRect.y >= restartY)
     {
         characterRect.x = 448;
@@ -356,6 +345,7 @@ while (!Raylib.WindowShouldClose())
 
     else if (scene == "game")
     {
+        // Simply targeting the camera onto the character
         if (cameraBool == true)
         {
             Raylib.BeginMode2D(camera);
@@ -363,13 +353,12 @@ while (!Raylib.WindowShouldClose())
         }
         Raylib.ClearBackground(BG);
 
-
-
-
+        //  Fetch the cordinates from the map data,
         for (int y = 0; y < mapData.GetLength(0); y++)
         {
             for (int x = 0; x < mapData.GetLength(1); x++)
             {
+                // then draw the image over that cordinate
                 if (mapData[y, x] == 0)
                 {
                     Raylib.DrawTexture(brickBG, x * tilesize, y * tilesize, Color.WHITE);
@@ -401,6 +390,10 @@ while (!Raylib.WindowShouldClose())
                     Raylib.DrawTexture(brickBG, x * tilesize, y * tilesize, Color.WHITE);
                     Raylib.DrawTexture(doubleJ,x * tilesize, y * tilesize,Color.WHITE);
                 }
+                if (mapData[y, x] == 7)
+                {
+                    Raylib.DrawRectangle(x * tilesize, y*tilesize, tilesize, tilesize, Color.RED);
+                }
             }
         }
 
@@ -421,6 +414,18 @@ while (!Raylib.WindowShouldClose())
                 scene = "won";
             }
         }
+        foreach (Rectangle e in enemies)
+        {
+            if(Raylib.CheckCollisionRecs(characterRect,e))
+            {
+                scene = "combat";
+            }
+        }
+
+    }
+
+    else if (scene == "comabt")
+    {
 
     }
 
@@ -481,83 +486,68 @@ while (!Raylib.WindowShouldClose())
     Raylib.EndDrawing();
 }
 
-static bool CheckWallCollision(Rectangle characterRect, List<Rectangle> walls, List<Rectangle> pads)
+
+// Checking collisions with items that are removed from the map
+static Rectangle CheckCollision(Rectangle characterRect, List<Rectangle> removables)
 {
-    foreach (Rectangle r in walls)
+    foreach (Rectangle p in removables)
+    {
+        if (Raylib.CheckCollisionRecs(characterRect, p))
+        {
+            return p;
+        }
+    foreach (Rectangle s in removables)
+        if (Raylib.CheckCollisionRecs(characterRect, s))
+        {
+            return s;
+        }
+    }
+    return new Rectangle();
+}
+// Checking collisions for items that the character has to collide into withour going through
+static bool CheckWallCollision(Rectangle characterRect, List<Rectangle> collidables)
+{
+    foreach (Rectangle r in collidables)
     {
         if (Raylib.CheckCollisionRecs(characterRect, r))
         {
             return true;
         }
     }
-    foreach (Rectangle b in pads)
+    foreach (Rectangle b in collidables)
     {
         if (Raylib.CheckCollisionRecs(characterRect, b))
         {
             return true;
         }
     }
+        foreach (Rectangle d in collidables)
+    {
+        if (Raylib.CheckCollisionRecs(characterRect, d))
+        {
+            return true;
+        }
+    }
 
     return false;
 }
-
-static Rectangle CheckPointCollision(Rectangle characterRect, List<Rectangle> points)
+// Checking for if the character is grounded or is standing on a boost pad
+static bool FeetCollision(Rectangle charfeet, List<Rectangle> effects)
 {
-    foreach (Rectangle p in points)
-    {
-        if (Raylib.CheckCollisionRecs(characterRect, p))
-        {
-            return p;
-        }
-    }
-
-    return new Rectangle();
-}
-static Rectangle CheckSpeedCollision(Rectangle characterRect, List<Rectangle> speeds)
-{
-    foreach (Rectangle s in speeds)
-    {
-        if (Raylib.CheckCollisionRecs(characterRect, s))
-        {
-            return s;
-        }
-    }
-
-    return new Rectangle();
-}
-
-static bool isgrounded(Rectangle charfeet, List<Rectangle> walls)
-{
-    foreach (Rectangle r in walls)
+    foreach (Rectangle r in effects)
     {
         if (Raylib.CheckCollisionRecs(charfeet, r))
         {
             return true;
         }
     }
-    
-
-    return false;
-}
-static bool isboosted(Rectangle charfeet, List<Rectangle> pads)
-{
-    foreach (Rectangle b in pads)
+    foreach (Rectangle b in effects)
     {
         if (Raylib.CheckCollisionRecs(charfeet, b))
         {
             return true;
         }
     }
-    return false;
-}
-static bool doublejump(Rectangle characherRect, List<Rectangle> doubles)
-{
-    foreach (Rectangle d in doubles)
-    {
-        if (Raylib.CheckCollisionRecs(characherRect, d))
-        {
-            return true;
-        }
-    }
+
     return false;
 }
