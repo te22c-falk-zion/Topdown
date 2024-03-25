@@ -30,7 +30,6 @@ bool cameraBool = false;
 bool text = false;
 bool Gravity = false;
 bool speeded = false;
-bool candoublejump = false;
 
 float charGravity = 7.0f;
 float jump_speed = 25;
@@ -76,6 +75,9 @@ List<Rectangle> enemies = new();
 List<Rectangle> removables = new();
 List<Rectangle> collidables = new();
 List<Rectangle> effects = new();
+
+Fighter enemy = new();
+Fighter player = new();
 
 // Map
 int[,] mapData = {
@@ -164,28 +166,26 @@ while (!Raylib.WindowShouldClose())
     if (grounded == false){Gravity = true;}
     if (Gravity == true) {charGravity = 8.0f;}
     if (Gravity == false) {charGravity = 0;}
-    if (doubleCan == true){candoublejump = true;}
-    if (doubleCan == false){candoublejump = false;}
 
 
     Rectangle pointRect = CheckCollision(characterRect, points);
     if (pointRect.width != 0)
     {
-        ScorePoints = ScorePoints + 1;
         points.Remove(pointRect);
     
         for (int y = 0; y < mapData.GetLength(0); y++)
         {
             for (int x = 0; x < mapData.GetLength(1); x++)
             {
+                // find the tile that is a pointrect then turn it to a 0s
                 if (mapData[(int)pointRect.y/tilesize,(int)pointRect.x/tilesize] == 3)
                 {
                 mapData[(int)pointRect.y/tilesize,(int)pointRect.x/tilesize] = 0;
+                ScorePoints = ScorePoints + 1;
                 } 
             }
         }
     }
-
 
 
     Rectangle speedRect = CheckCollision(characterRect, speeds);
@@ -197,11 +197,30 @@ while (!Raylib.WindowShouldClose())
         {
             for (int x = 0; x < mapData.GetLength(1); x++)
             {
+                // find the tile that is a speedrect then turn it to a 0s
                 if (mapData[(int)speedRect.y/tilesize,(int)speedRect.x/tilesize] == 5)
                 {
                 mapData[(int)speedRect.y/tilesize,(int)speedRect.x/tilesize] = 0;
                 speedtime =  420;
                 speeded = true;
+                }
+            }
+        }
+    }
+
+    Rectangle enemiesRect = CheckCollision(characterRect, enemies);
+    if (enemiesRect.width != 0)
+    {
+        enemies.Remove(enemiesRect);
+        scene = "fight";
+        for (int y = 0; y < mapData.GetLength(0); y++)
+        {
+            for (int x = 0; x < mapData.GetLength(1); x++)
+            {
+                
+                if (mapData[(int)speedRect.y/tilesize,(int)speedRect.x/tilesize] == 7)
+                {
+                mapData[(int)speedRect.y/tilesize,(int)speedRect.x/tilesize] = 0;
                 }
             }
         }
@@ -246,7 +265,6 @@ while (!Raylib.WindowShouldClose())
     {
         jumping = true;
         movement.Y = -1;
-        Gravity = true;
     }
     if (airtime > 0 && jumping == true)
     {
@@ -254,31 +272,30 @@ while (!Raylib.WindowShouldClose())
         jump_speed += -1f;
         airtime--;
     }
-    else if (airtime <=0)
+
+    if (Raylib.IsKeyDown(KeyboardKey.KEY_SPACE) && doubleCan == true)
     {
-        Gravity = true;
-    }
-    if (Raylib.IsKeyDown(KeyboardKey.KEY_SPACE) && candoublejump == true)
-    {
-        movement.Y = -1;
         jump_speed = 28;
         jump_speed += -1f;
         airtime = framerate/3;
     }
+    // if feet are touching the gorund then 
     if (FeetCollision(charfeet, walls))
     {
         jumping = false;
-        Gravity = false;
         airtime = framerate/3;
         jump_speed = 28;
     }
+
+    // if feet are touching a bounce pad then increase jumpheight
     if (FeetCollision(charfeet, pads))
     {
         jumping = false;
-        Gravity = false;
         airtime = framerate/3;
         jump_speed = 40;
     }
+
+    // to be removed for final product
     if (jumping == true)
     {
         Console.WriteLine($"jumping is true {characterRect.y}");
@@ -333,7 +350,7 @@ while (!Raylib.WindowShouldClose())
     {
         Raylib.DrawText("Welcome oh honourless...The trials await you", 80, 40, 30, BLOOD);
         Raylib.DrawText("Press [Q] to begin your ordeal", 120, 100, 30, BLOOD);
-        Raylib.DrawText("Do your best to humour us...", 160, 350, 30, BLOOD);
+        Raylib.DrawText("Collect points from enemies or scattered hearts", 160, 350, 30, BLOOD);
         if (Raylib.IsKeyPressed(KeyboardKey.KEY_Q))
         {
             scene = "game";
@@ -414,18 +431,35 @@ while (!Raylib.WindowShouldClose())
                 scene = "won";
             }
         }
-        foreach (Rectangle e in enemies)
-        {
-            if(Raylib.CheckCollisionRecs(characterRect,e))
-            {
-                scene = "combat";
-            }
-        }
-
     }
 
-    else if (scene == "comabt")
+
+    else if (scene == "fight")
     {
+        Raylib.ClearBackground(Color.BLACK);
+        Raylib.DrawText("WEEWOO COMBAT!!!!", 80, 60, 40, BLOOD);
+        Raylib.DrawText($"Your hp:{player._hp}",80, 500, 40, BLOOD);
+        Raylib.DrawText($"Enemy hp:{enemy._hp}",600, 500, 40, BLOOD);
+
+        Raylib.DrawText("ATTACK(A)                        COUNTER(G)", 80, 440, 40, BLOOD);
+
+        if(Raylib.IsKeyPressed(KeyboardKey.KEY_A))
+        {
+            player.Attack(enemy);
+            enemy.Attack(player);
+        }
+        if(Raylib.IsKeyPressed(KeyboardKey.KEY_G))
+        {
+            player.Counter(enemy, player);
+        }
+        if (player._hp <= 0)
+        {
+            scene = "GG";
+        }
+        else if (enemy._hp == 0)
+        {
+            scene = "game";
+        }
 
     }
 
@@ -500,6 +534,11 @@ static Rectangle CheckCollision(Rectangle characterRect, List<Rectangle> removab
         if (Raylib.CheckCollisionRecs(characterRect, s))
         {
             return s;
+        }
+    foreach (Rectangle e in removables)
+        if (Raylib.CheckCollisionRecs(characterRect, e))
+        {
+            return e;
         }
     }
     return new Rectangle();
