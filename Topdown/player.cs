@@ -9,10 +9,12 @@ public class Character
     public float jump = 25;
 
     Rectangle characterRect = new Rectangle(448,448, 54, 64);
-    
 
-    public void Update(List<Rectangle>)
+
+    public void Update(List<Rectangle> characterrect)
     {
+
+
 
     }
 

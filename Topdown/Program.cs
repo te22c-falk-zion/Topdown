@@ -35,6 +35,7 @@ float charGravity = 7.0f;
 float jump_speed = 25;
 float speed = 8;
 string scene = "start";
+string attackstate = "";
 
 // Färger
 Color BG = new Color(58, 58, 58, 255);
@@ -445,12 +446,25 @@ while (!Raylib.WindowShouldClose())
 
         if(Raylib.IsKeyPressed(KeyboardKey.KEY_A))
         {
-            player.Attack(enemy);
-            enemy.Attack(player);
+            player.Attack(enemy, player);
+            enemy.Attack(player, enemy);
         }
         if(Raylib.IsKeyPressed(KeyboardKey.KEY_G))
         {
             player.Counter(enemy, player);
+        }
+        if(player.attack == true)
+        {
+            Raylib.DrawText($"Player did {player.damage} to the enemy!", 80,100,40,Color.WHITE);
+            Raylib.DrawText($"Enemy dealt {enemy.damage} to you!",80,140,40,Color.WHITE);
+        }
+        else if (player.counter == true)
+        {
+            Raylib.DrawText($"Succesful counter! You dealt {player.damage} damage!",80, 100, 40, Color.WHITE);
+        }
+        else if (player.countermiss == true)
+        {
+            Raylib.DrawText($"Unsuccesful couner.. You took {player.damage} damage", 80, 100, 40, Color.WHITE);
         }
         if (player._hp <= 0)
         {
@@ -469,22 +483,14 @@ while (!Raylib.WindowShouldClose())
         Raylib.DrawText("How did you?\nZero points?\nWow..you suck...", 120, 60, 40, BLOOD);
         if(gametime <= 0)
         {
-        Raylib.DrawText("its enter to leave btw\nbet you suck too much to know that", 120, 240, 40, BLOOD);
-        }
-        if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER))
-        {
-            Raylib.CloseWindow();
+        Raylib.DrawText("its enter to [esc] btw\nbet you suck too much to know that", 120, 240, 40, BLOOD);
         }
     }
     else if (scene == "won" && ScorePoints < 3)
     {
         Raylib.ClearBackground(Color.BLACK);
-        Raylib.DrawText("Is that it?\nLeave at once.\nPress [ENTER] to leave", 120, 60, 40, BLOOD);
+        Raylib.DrawText("Is that it?\nLeave at once.\nPress [esc] to leave", 120, 60, 40, BLOOD);
         gametime--;
-        if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER))
-        {
-            Raylib.CloseWindow();
-        }
         if (gametime <= 0)
         {
             Raylib.DrawText("I said leave.", 120, 220, 60, BLOOD);
@@ -501,20 +507,17 @@ while (!Raylib.WindowShouldClose())
     else if (scene == "won" && ScorePoints == 6)
     {
         Raylib.ClearBackground(Color.BLACK);
-        Raylib.DrawText("Marvelous\nSimply marvelous...\nPress [ENTER] to leave", 120, 60, 40, BLOOD);
-        if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER))
-        {
-            Raylib.CloseWindow();
-        }
+        Raylib.DrawText("Marvelous\nSimply marvelous...\nPress [esc] to leave", 120, 60, 40, BLOOD);
     }
     else if (scene == "won" && ScorePoints >= 3)
     {
         Raylib.ClearBackground(Color.BLACK);
-        Raylib.DrawText("Good enough.\nThe trial is pleased.\nPress [ENTER] to leave", 120, 60, 40, BLOOD);
-        if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER))
-        {
-            Raylib.CloseWindow();
-        }
+        Raylib.DrawText("Good enough.\nThe trial is pleased.\nPress [esc] to leave", 120, 60, 40, BLOOD);
+    }
+    else if (scene == "GG")
+    {
+        Raylib.ClearBackground(BLOOD);
+        Raylib.DrawText("You died, try to rely on the counter to not take damage", 120, 60, 40, Color.BLACK);
     }
 
     Raylib.EndDrawing();
