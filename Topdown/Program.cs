@@ -79,7 +79,7 @@ Fighter enemy = new();
 Fighter player = new();
 Character character = new();
 
-character.mapHitboxes(walls, goals, points, pads, speeds,doubles,enemies,collidables);
+character.mapHitboxes(walls, goals, points, pads, speeds,doubles,enemies,collidables,removables);
 
 // Map
 // int[,] mapData = {
