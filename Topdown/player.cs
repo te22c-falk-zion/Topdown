@@ -42,7 +42,7 @@ public class Character
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,6,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {3,0,0,0,0,0,0,0,0,5,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1},
@@ -77,34 +77,34 @@ public class Character
                 if (mapData[y, x] == 2)
                 {
                     Raylib_cs.Rectangle g = new Raylib_cs.Rectangle(x * tilesize, y * tilesize, tilesize, tilesize);
-                    points.Add(g);
+                    goals.Add(g);
                 }
-                if (mapData[y, x] == 3)
-                {
-                    Raylib_cs.Rectangle p = new Raylib_cs.Rectangle(x * tilesize, y * tilesize, pointsize, pointsize);
-                    points.Add(p);
-                }
-                if (mapData[y, x] == 4)
-                {
-                    Raylib_cs.Rectangle b = new Raylib_cs.Rectangle(x * tilesize, y * tilesize, tilesize, tilesize);
-                    pads.Add(b);
-                    collidables.Add(b);
-                }
-                if (mapData[y, x] == 5)
-                {
-                    Raylib_cs.Rectangle s = new Raylib_cs.Rectangle(x * tilesize, y * tilesize, pointsize, pointsize);
-                    speeds.Add(s);
-                }
-                if (mapData[y, x] == 6)
-                {
-                    Raylib_cs.Rectangle d = new Raylib_cs.Rectangle(x * tilesize, y * tilesize, doublesize, doublesize);
-                    doubles.Add(d);
-                }
-                if (mapData[y, x] == 7)
-                {
-                    Raylib_cs.Rectangle e = new Raylib_cs.Rectangle(x * tilesize, y * tilesize, doublesize, doublesize);
-                    enemies.Add(e);
-                }
+                // if (mapData[y, x] == 3)
+                // {
+                //     Raylib_cs.Rectangle p = new Raylib_cs.Rectangle(x * tilesize, y * tilesize, pointsize, pointsize);
+                //     points.Add(p);
+                // }
+                // if (mapData[y, x] == 4)
+                // {
+                //     Raylib_cs.Rectangle b = new Raylib_cs.Rectangle(x * tilesize, y * tilesize, tilesize, tilesize);
+                //     pads.Add(b);
+                //     collidables.Add(b);
+                // }
+                // if (mapData[y, x] == 5)
+                // {
+                //     Raylib_cs.Rectangle s = new Raylib_cs.Rectangle(x * tilesize, y * tilesize, pointsize, pointsize);
+                //     speeds.Add(s);
+                // }
+                // if (mapData[y, x] == 6)
+                // {
+                //     Raylib_cs.Rectangle d = new Raylib_cs.Rectangle(x * tilesize, y * tilesize, doublesize, doublesize);
+                //     doubles.Add(d);
+                // }
+                // if (mapData[y, x] == 7)
+                // {
+                //     Raylib_cs.Rectangle e = new Raylib_cs.Rectangle(x * tilesize, y * tilesize, doublesize, doublesize);
+                //     enemies.Add(e);
+                // }
             }
         }
     }
@@ -128,28 +128,28 @@ public class Character
                     Raylib.DrawTexture(Skull, x * tilesize, y * tilesize, Raylib_cs.Color.WHITE);
 
                 }
-                if (mapData[y, x] == 3)
-                {
-                    Raylib.DrawTexture(Heart, x * tilesize, y * tilesize, Raylib_cs.Color.WHITE);
-                }
-                if (mapData[y, x] == 4)
-                {
-                    Raylib.DrawTexture(jumppad, x * tilesize, y * tilesize, Raylib_cs.Color.WHITE);
-                }
-                if (mapData[y, x] == 5)
-                {
-                    Raylib.DrawTexture(brickBG, x * tilesize, y * tilesize, Raylib_cs.Color.WHITE);
-                    Raylib.DrawTexture(speedb, x * tilesize, y * tilesize, Raylib_cs.Color.WHITE);
-                }
-                if (mapData[y, x] == 6)
-                {
-                    Raylib.DrawTexture(brickBG, x * tilesize, y * tilesize, Raylib_cs.Color.WHITE);
-                    Raylib.DrawTexture(doubleJ, x * tilesize, y * tilesize, Raylib_cs.Color.WHITE);
-                }
-                if (mapData[y, x] == 7)
-                {
-                    Raylib.DrawRectangle(x * tilesize, y * tilesize, tilesize, tilesize, Raylib_cs.Color.RED);
-                }
+                // if (mapData[y, x] == 3)
+                // {
+                //     Raylib.DrawTexture(Heart, x * tilesize, y * tilesize, Raylib_cs.Color.WHITE);
+                // }
+                // if (mapData[y, x] == 4)
+                // {
+                //     Raylib.DrawTexture(jumppad, x * tilesize, y * tilesize, Raylib_cs.Color.WHITE);
+                // }
+                // if (mapData[y, x] == 5)
+                // {
+                //     Raylib.DrawTexture(brickBG, x * tilesize, y * tilesize, Raylib_cs.Color.WHITE);
+                //     Raylib.DrawTexture(speedb, x * tilesize, y * tilesize, Raylib_cs.Color.WHITE);
+                // }
+                // if (mapData[y, x] == 6)
+                // {
+                //     Raylib.DrawTexture(brickBG, x * tilesize, y * tilesize, Raylib_cs.Color.WHITE);
+                //     Raylib.DrawTexture(doubleJ, x * tilesize, y * tilesize, Raylib_cs.Color.WHITE);
+                // }
+                // if (mapData[y, x] == 7)
+                // {
+                //     Raylib.DrawRectangle(x * tilesize, y * tilesize, tilesize, tilesize, Raylib_cs.Color.RED);
+                // }
             }
         }
     }
@@ -158,13 +158,13 @@ public class Character
     {
         static Raylib_cs.Rectangle CheckCollision(Raylib_cs.Rectangle characterRect, List<Raylib_cs.Rectangle> removables)
         {
-               foreach (Raylib_cs.Rectangle p in removables)
-               {
-                if (Raylib.CheckCollisionRecs(characterRect, p))
-                {
-                    return p;
-                }
-               }
+            //    foreach (Raylib_cs.Rectangle p in removables)
+            //    {
+            //     if (Raylib.CheckCollisionRecs(characterRect, p))
+            //     {
+            //         return p;
+            //     }
+            //    }
                 // foreach (Raylib_cs.Rectangle s in removables)
                 // {
                 //     if (Raylib.CheckCollisionRecs(characterRect, s))
@@ -179,91 +179,91 @@ public class Character
                 //         return e;
                 //     }
                 // }
-                // foreach (Raylib_cs.Rectangle g in removables)
-                // {
-                //     if (Raylib.CheckCollisionRecs(characterRect, g))
-                //     {
-                //         return g;
-                //     }
-                // }
+                foreach (Raylib_cs.Rectangle g in removables)
+                {
+                    if (Raylib.CheckCollisionRecs(characterRect, g))
+                    {
+                        return g;
+                    }
+                }
             return new Raylib_cs.Rectangle();
         }
 
-        Raylib_cs.Rectangle pointRect = CheckCollision(characterRect, points);
-        if (pointRect.width != 0)
+        // Raylib_cs.Rectangle pointRect = CheckCollision(characterRect, points);
+        // if (pointRect.width != 0)
+        // {
+        //     points.Remove(pointRect);
+        //     ScorePoints = ScorePoints + 1;
+
+        //     // for (int y = 0; y < mapData.GetLength(0); y++)
+        //     // {
+        //     //     for (int x = 0; x < mapData.GetLength(1); x++)
+        //     //     {
+        //             // find the tile that is a pointrect then turn it to a 0s
+        //             if (mapData[(int)pointRect.y / tilesize, (int)pointRect.x / tilesize] == 3)
+        //             {
+        //                 mapData[(int)pointRect.y / tilesize, (int)pointRect.x / tilesize] = 0;
+        //             }
+        //     //     }
+        //     // }
+        // }
+
+        // Raylib_cs.Rectangle speedRect = CheckCollision(characterRect, speeds);
+        // if (speedRect.width != 0)
+        // {
+        //     speeds.Remove(speedRect);
+        //     speedtime = 420;
+        //     speeded = true;
+
+        //     // for (int y = 0; y < mapData.GetLength(0); y++)
+        //     // {
+        //     //     for (int x = 0; x < mapData.GetLength(1); x++)
+        //     //     {
+        //             // find the tile that is a speedrect then turn it to a 0s
+        //             if (mapData[(int)speedRect.y / doublesize, (int)speedRect.x / doublesize] == 5)
+        //             {
+        //                 mapData[(int)speedRect.y / doublesize, (int)speedRect.x / doublesize] = 0;
+        //             }
+        //     //     }
+        //     // }
+        // }
+
+        Raylib_cs.Rectangle goalRect = CheckCollision(characterRect, goals);
+        if (goalRect.width != 0)
         {
-            points.Remove(pointRect);
-            ScorePoints = ScorePoints + 1;
+            goals.Remove(goalRect);
+            scene = "won";
 
             // for (int y = 0; y < mapData.GetLength(0); y++)
             // {
             //     for (int x = 0; x < mapData.GetLength(1); x++)
             //     {
                     // find the tile that is a pointrect then turn it to a 0s
-                    if (mapData[(int)pointRect.y / tilesize, (int)pointRect.x / tilesize] == 3)
+                    if (mapData[(int)goalRect.y / tilesize, (int)goalRect.x / tilesize] == 2)
                     {
-                        mapData[(int)pointRect.y / tilesize, (int)pointRect.x / tilesize] = 0;
+                        mapData[(int)goalRect.y / tilesize, (int)goalRect.x / tilesize] = 0;
                     }
             //     }
             // }
         }
 
-// '        Raylib_cs.Rectangle speedRect = CheckCollision(characterRect, speeds);
-//         if (speedRect.width != 0)
-//         {
-//             speeds.Remove(speedRect);
-//             speedtime = 420;
-//             speeded = true;
+        // Raylib_cs.Rectangle enemiesRect = CheckCollision(characterRect, enemies);
+        // if (enemiesRect.width != 0)
+        // {
+        //     enemies.Remove(enemiesRect);
+        //     scene = "fight";
+        //     // for (int y = 0; y < mapData.GetLength(0); y++)
+        //     // {
+        //     //     for (int x = 0; x < mapData.GetLength(1); x++)
+        //     //     {
 
-//             // for (int y = 0; y < mapData.GetLength(0); y++)
-//             // {
-//             //     for (int x = 0; x < mapData.GetLength(1); x++)
-//             //     {
-//                     // find the tile that is a speedrect then turn it to a 0s
-//                     if (mapData[(int)speedRect.y / doublesize, (int)speedRect.x / doublesize] == 5)
-//                     {
-//                         mapData[(int)speedRect.y / doublesize, (int)speedRect.x / doublesize] = 0;
-//                     }
-//             //     }
-//             // }
-//         }
-
-//         Raylib_cs.Rectangle goalRect = CheckCollision(characterRect, goals);
-//         if (goalRect.width != 0)
-//         {
-//             goals.Remove(goalRect);
-//             scene = "won";
-
-//             // for (int y = 0; y < mapData.GetLength(0); y++)
-//             // {
-//             //     for (int x = 0; x < mapData.GetLength(1); x++)
-//             //     {
-//                     // find the tile that is a pointrect then turn it to a 0s
-//                     if (mapData[(int)goalRect.y / tilesize, (int)goalRect.x / tilesize] == 2)
-//                     {
-//                         mapData[(int)goalRect.y / tilesize, (int)goalRect.x / tilesize] = 0;
-//                     }
-//             //     }
-//             // }
-//         }
-
-//         Raylib_cs.Rectangle enemiesRect = CheckCollision(characterRect, enemies);
-//         if (enemiesRect.width != 0)
-//         {
-//             enemies.Remove(enemiesRect);
-//             scene = "fight";
-//             // for (int y = 0; y < mapData.GetLength(0); y++)
-//             // {
-//             //     for (int x = 0; x < mapData.GetLength(1); x++)
-//             //     {
-
-//                     if (mapData[(int)enemiesRect.y / doublesize, (int)enemiesRect.x / doublesize] == 7)
-//                     {
-//                         mapData[(int)enemiesRect.y / doublesize, (int)enemiesRect.x / doublesize] = 0;
-//                     }
-//             //     }
-//             // }
-//         }'
+        //             if (mapData[(int)enemiesRect.y / doublesize, (int)enemiesRect.x / doublesize] == 7)
+        //             {
+        //                 mapData[(int)enemiesRect.y / doublesize, (int)enemiesRect.x / doublesize] = 0;
+        //             }
+        //     //     }
+        //     // }
+        // }
     }
 
 
