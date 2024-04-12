@@ -82,7 +82,7 @@ public class Character
                 if (mapData[y, x] == 3)
                 {
                     Raylib_cs.Rectangle p = new Raylib_cs.Rectangle(x * tilesize, y * tilesize, pointsize, pointsize);
-                    points.Add(p);
+                    // points.Add(p);
                 }
                 if (mapData[y, x] == 4)
                 {
@@ -188,6 +188,7 @@ public class Character
                 }
             return new Raylib_cs.Rectangle();
         }
+
         Raylib_cs.Rectangle pointRect = CheckCollision(characterRect, points);
         if (pointRect.width != 0)
         {
@@ -206,6 +207,7 @@ public class Character
             //     }
             // }
         }
+
         Raylib_cs.Rectangle speedRect = CheckCollision(characterRect, speeds);
         if (speedRect.width != 0)
         {
@@ -225,6 +227,7 @@ public class Character
             //     }
             // }
         }
+
         Raylib_cs.Rectangle goalRect = CheckCollision(characterRect, goals);
         if (goalRect.width != 0)
         {
@@ -236,13 +239,14 @@ public class Character
             //     for (int x = 0; x < mapData.GetLength(1); x++)
             //     {
                     // find the tile that is a pointrect then turn it to a 0s
-                    if (mapData[(int)pointRect.y / tilesize, (int)pointRect.x / tilesize] == 2)
+                    if (mapData[(int)goalRect.y / tilesize, (int)goalRect.x / tilesize] == 2)
                     {
-                        mapData[(int)pointRect.y / tilesize, (int)pointRect.x / tilesize] = 0;
+                        mapData[(int)goalRect.y / tilesize, (int)goalRect.x / tilesize] = 0;
                     }
             //     }
             // }
         }
+
         Raylib_cs.Rectangle enemiesRect = CheckCollision(characterRect, enemies);
         if (enemiesRect.width != 0)
         {
@@ -253,15 +257,13 @@ public class Character
             //     for (int x = 0; x < mapData.GetLength(1); x++)
             //     {
 
-                    if (mapData[(int)speedRect.y / doublesize, (int)speedRect.x / doublesize] == 7)
+                    if (mapData[(int)enemiesRect.y / doublesize, (int)enemiesRect.x / doublesize] == 7)
                     {
-                        mapData[(int)speedRect.y / doublesize, (int)speedRect.x / doublesize] = 0;
+                        mapData[(int)enemiesRect.y / doublesize, (int)enemiesRect.x / doublesize] = 0;
                     }
             //     }
             // }
         }
-
-
     }
 
     static bool CheckWallCollision(Raylib_cs.Rectangle characterRect, List<Raylib_cs.Rectangle> collidables)
