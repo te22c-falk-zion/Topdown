@@ -367,9 +367,9 @@ while (!Raylib.WindowShouldClose())
             Raylib.BeginMode2D(camera);
             camera.target = new Vector2(character.characterRect.x + 32, character.characterRect.y + 32);
         }
+        character.CheckCollision(speeds, enemies, goals, points);
         Raylib.ClearBackground(BG);
 
-        character.CheckCollision(speeds, enemies, goals, points);
         character.drawtime();
         character.MovementUpdate(doubles, walls, pads, collidables);
         character.charImage();

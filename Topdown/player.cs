@@ -36,7 +36,7 @@ public class Character
     Texture2D jumppad = Raylib.LoadTexture("jump.png");
     Texture2D speedb = Raylib.LoadTexture("speed.png");
     Texture2D doubleJ = Raylib.LoadTexture("Up_arrow.png");
-    int[,] mapData = {
+    public int[,] mapData = {
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -82,7 +82,7 @@ public class Character
                 if (mapData[y, x] == 3)
                 {
                     Raylib_cs.Rectangle p = new Raylib_cs.Rectangle(x * tilesize, y * tilesize, pointsize, pointsize);
-                    // points.Add(p);
+                    points.Add(p);
                 }
                 if (mapData[y, x] == 4)
                 {
@@ -179,13 +179,13 @@ public class Character
                         return e;
                     }
                 }
-                foreach (Raylib_cs.Rectangle g in removables)
-                {
-                    if (Raylib.CheckCollisionRecs(characterRect, g))
-                    {
-                        return g;
-                    }
-                }
+                // foreach (Raylib_cs.Rectangle g in removables)
+                // {
+                //     if (Raylib.CheckCollisionRecs(characterRect, g))
+                //     {
+                //         return g;
+                //     }
+                // }
             return new Raylib_cs.Rectangle();
         }
 
@@ -266,56 +266,11 @@ public class Character
         }
     }
 
-    static bool CheckWallCollision(Raylib_cs.Rectangle characterRect, List<Raylib_cs.Rectangle> collidables)
-    {
-        foreach (Raylib_cs.Rectangle r in collidables)
-        {
-            if (Raylib.CheckCollisionRecs(characterRect, r))
-            {
-                return true;
-            }
-        }
-        foreach (Raylib_cs.Rectangle b in collidables)
-        {
-            if (Raylib.CheckCollisionRecs(characterRect, b))
-            {
-                return true;
-            }
-        }
-        foreach (Raylib_cs.Rectangle d in collidables)
-        {
-            if (Raylib.CheckCollisionRecs(characterRect, d))
-            {
-                return true;
-            }
-        }
 
-        return false;
-    }
-    static bool FeetCollision(Raylib_cs.Rectangle charfeet, List<Raylib_cs.Rectangle> effects)
-    {
-        foreach (Raylib_cs.Rectangle r in effects)
-        {
-            if (Raylib_cs.Raylib.CheckCollisionRecs(charfeet, r))
-            {
-                return true;
-            }
-        }
-        foreach (Raylib_cs.Rectangle b in effects)
-        {
-            if (Raylib.CheckCollisionRecs(charfeet, b))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     public void MovementUpdate(List<Raylib_cs.Rectangle> doubles, List<Raylib_cs.Rectangle> walls, List<Raylib_cs.Rectangle> pads, List<Raylib_cs.Rectangle> collidables)
     {
         movement = Vector2.Zero;
-        // bool doublecan = CheckWallCollision(characterRect, doubles);
         bool grounded = FeetCollision(charfeet, walls);
         if (grounded == true) { Gravity = false; }
         if (grounded == false) { Gravity = true; }
@@ -387,6 +342,52 @@ public class Character
 
         characterRect.y += movement.Y * jump_speed + charGravity;
         charfeet.y += movement.Y * jump_speed + charGravity;
+
+        static bool CheckWallCollision(Raylib_cs.Rectangle characterRect, List<Raylib_cs.Rectangle> collidables)
+    {
+        foreach (Raylib_cs.Rectangle r in collidables)
+        {
+            if (Raylib.CheckCollisionRecs(characterRect, r))
+            {
+                return true;
+            }
+        }
+        foreach (Raylib_cs.Rectangle b in collidables)
+        {
+            if (Raylib.CheckCollisionRecs(characterRect, b))
+            {
+                return true;
+            }
+        }
+        foreach (Raylib_cs.Rectangle d in collidables)
+        {
+            if (Raylib.CheckCollisionRecs(characterRect, d))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    static bool FeetCollision(Raylib_cs.Rectangle charfeet, List<Raylib_cs.Rectangle> effects)
+    {
+        foreach (Raylib_cs.Rectangle r in effects)
+        {
+            if (Raylib_cs.Raylib.CheckCollisionRecs(charfeet, r))
+            {
+                return true;
+            }
+        }
+        foreach (Raylib_cs.Rectangle b in effects)
+        {
+            if (Raylib.CheckCollisionRecs(charfeet, b))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
         if (CheckWallCollision(characterRect, collidables))
         {
