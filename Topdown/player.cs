@@ -78,13 +78,11 @@ public class Character
                 {
                     Raylib_cs.Rectangle g = new Raylib_cs.Rectangle(x * tilesize, y * tilesize, tilesize, tilesize);
                     goals.Add(g);
-                    removables.Add(g);
                 }
                 if (mapData[y, x] == 3)
                 {
                     Raylib_cs.Rectangle p = new Raylib_cs.Rectangle(x * tilesize, y * tilesize, pointsize, pointsize);
                     points.Add(p);
-                    removables.Add(p);
                 }
                 if (mapData[y, x] == 4)
                 {
@@ -96,7 +94,6 @@ public class Character
                 {
                     Raylib_cs.Rectangle s = new Raylib_cs.Rectangle(x * tilesize, y * tilesize, pointsize, pointsize);
                     speeds.Add(s);
-                    removables.Add(s);
                 }
                 if (mapData[y, x] == 6)
                 {
