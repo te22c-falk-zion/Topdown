@@ -15,7 +15,9 @@
   <Content Include="brickBG.png" CopyToOutputDirectory="always" />
   <Content Include="jump.png" CopyToOutputDirectory="always" /> 
   <Content Include="speed.png" CopyToOutputDirectory="always" />
-    <Content Include="Up_arrow.png" CopyToOutputDirectory="always" /> 
+  <Content Include="Up_arrow.png" CopyToOutputDirectory="always" /> 
+  <Content Include="demon.png" CopyToOutputDirectory="always" /> 
+    <Content Include="*.png" CopyToOutputDirectory="always" /> 
   </ItemGroup>
   
   <ItemGroup>

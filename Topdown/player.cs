@@ -34,6 +34,8 @@ public class Character
     Texture2D brickBG = Raylib.LoadTexture("brickBG.png");
     Texture2D jumppad = Raylib.LoadTexture("jump.png");
     Texture2D speedb = Raylib.LoadTexture("speed.png");
+    Texture2D demon = Raylib.LoadTexture("demon.png");
+    Texture2D demonbody = Raylib.LoadTexture("demonkill.png");
     Texture2D doubleJ = Raylib.LoadTexture("Up_arrow.png");
     public int[,] mapData = {
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -93,7 +95,8 @@ public class Character
                 if (mapData[y, x] == 4) {Raylib.DrawTexture(jumppad, x * tilesize, y * tilesize, Color.WHITE);}
                 if (mapData[y, x] == 5) {Raylib.DrawTexture(brickBG, x * tilesize, y * tilesize, Color.WHITE); Raylib.DrawTexture(speedb, x * tilesize, y * tilesize, Color.WHITE);}
                 if (mapData[y, x] == 6) {Raylib.DrawTexture(brickBG, x * tilesize, y * tilesize, Color.WHITE); Raylib.DrawTexture(doubleJ, x * tilesize, y * tilesize, Color.WHITE);}
-                if (mapData[y, x] == 7) {Raylib.DrawRectangle(x * tilesize, y * tilesize, tilesize, tilesize, Color.RED);}
+                if (mapData[y, x] == 7) {Raylib.DrawTexture(brickBG, x * tilesize, y * tilesize, Color.WHITE); Raylib.DrawTexture(demon, x * tilesize, y * tilesize, Color.WHITE);}
+                if (mapData[y, x] == 8) {Raylib.DrawTexture(brickBG, x * tilesize, y * tilesize, Color.WHITE); Raylib.DrawTexture(demonbody, x * tilesize, y * tilesize+36, Color.RED);}
             }
         }
     }
@@ -201,9 +204,9 @@ public class Character
             //     for (int x = 0; x < mapData.GetLength(1); x++)
             //     {
 
-                    if (mapData[(int)enemiesRect.y / doublesize, (int)enemiesRect.x / doublesize] == 7)
+                    if (mapData[(int)enemiesRect.y / tilesize, (int)enemiesRect.x / tilesize] == 7)
                     {
-                        mapData[(int)enemiesRect.y / doublesize, (int)enemiesRect.x / doublesize] = 0;
+                        mapData[(int)enemiesRect.y / tilesize, (int)enemiesRect.x / tilesize] = 8;
                     }
             //     }
             // }
