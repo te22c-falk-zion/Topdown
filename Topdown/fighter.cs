@@ -28,15 +28,15 @@ public class Fighter
     public void Counter(Fighter target, Fighter user)
     {
         int dice = Random.Shared.Next(_mindamage,_maxdamage);
-        if (dice <= 15)
+        if (dice <= 20)
         {
-            int damage = Random.Shared.Next(_mindamage, _maxdamage) - 10;
+            int damage = Random.Shared.Next(_mindamage, _maxdamage);
             target.Hurt(damage);
             counter = true;
             countermiss = false;
             attack = false;
         }
-        else if (dice > 15)
+        else if (dice > 21)
         {
             int damage = Random.Shared.Next(_mindamage, _maxdamage);
             user.Hurt(damage); 

@@ -345,11 +345,20 @@ while (!Raylib.WindowShouldClose())
 
     Raylib.ClearBackground(Color.BLACK);
 
-    if (character.scene == "start")
+    if (character.scene == "controls")
+    {
+        Raylib.DrawText("Controls\n [W] to jump\n [A] to move left\n [D] to move right\n Shift to sprint\n press [Q] to move on", 80, 40, 30, BLOOD);
+        if (Raylib.IsKeyPressed(KeyboardKey.KEY_Q))
+        {
+            character.scene = "start";
+        }
+    }
+
+    else if (character.scene == "start")
     {
         Raylib.DrawText("Welcome oh honourless...The trials await you", 80, 40, 30, BLOOD);
-        Raylib.DrawText("Press [Q] to begin your ordeal", 120, 100, 30, BLOOD);
-        Raylib.DrawText("Collect points from enemies or scattered hearts", 160, 350, 30, BLOOD);
+        Raylib.DrawText("Press [Q] to begin your ordeal", 80, 100, 30, BLOOD);
+        Raylib.DrawText("Collect points from enemies or scattered hearts", 80, 250, 30, BLOOD);
         if (Raylib.IsKeyPressed(KeyboardKey.KEY_Q))
         {
             character.scene = "game";
@@ -469,13 +478,28 @@ while (!Raylib.WindowShouldClose())
         {
             Raylib.DrawText($"Unsuccesful couner.. You took {player.damage} damage", 80, 100, 40, Color.WHITE);
         }
-        if (player._hp <= 0)
+        if (enemy._hp <= 0 && player._hp <= 0)
+        {
+            character.scene = "game";
+            enemy._hp = 100;
+            player._hp = 100;
+            player.counter = false;
+            player.attack = false;
+            player.countermiss = false;
+        }
+        else if (player._hp <= 0)
         {
             character.scene = "GG";
         }
-        else if (enemy._hp == 0)
+        else if (enemy._hp <= 0)
         {
             character.scene = "game";
+            character.ScorePoints = character.ScorePoints + 1;
+            enemy._hp = 100;
+            player._hp = 100;
+            player.counter = false;
+            player.attack = false;
+            player.countermiss = false;
         }
 
     }
@@ -520,7 +544,8 @@ while (!Raylib.WindowShouldClose())
     else if (character.scene == "GG")
     {
         Raylib.ClearBackground(BLOOD);
-        Raylib.DrawText("You died, try to rely on the counter to not take damage", 120, 60, 40, Color.BLACK);
+        Raylib.DrawText("You died, try to rely on the counter to not take damage", 120, 60, 20, Color.BLACK);
+        Raylib.DrawText("it's risky but try and utilize it. [esc] to leave.", 140, 60, 20, Color.BLACK);
     }
 
     Raylib.EndDrawing();
