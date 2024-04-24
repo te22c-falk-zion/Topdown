@@ -3,13 +3,13 @@ using Raylib_cs;
 
 public class Character
 {
-    public int Height = 64;
-    public int Width = 54;
+    public int height = 64;
+    public int width = 54;
     public int tilesize = 64;
     public int pointsize = 16;
     public int doublesize = 32;
     public int speedtime = 420;
-    public int ScorePoints = 0;
+    public int scorePoints = 0;
     public int waittime = 180;
     public int airtime = 20;
     public int restartY = 1088;
@@ -18,8 +18,8 @@ public class Character
     public float jump_speed = 25;
     public bool speeded = false;
     public bool grounded = false;
-    public bool doublecan = false;
-    public bool Gravity = false;
+    public bool doubleCan = false;
+    public bool gravity = false;
     public bool jumping = false;
     public bool text = false;
     public string scene = "controls";
@@ -63,7 +63,7 @@ public class Character
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 };
 
-    public void mapHitboxes(List<Rectangle> walls, List<Rectangle> goals, List<Rectangle> points, List<Rectangle> pads, List<Rectangle> speeds, List<Rectangle> doubles, List<Rectangle> enemies, List<Rectangle> collidables, List<Rectangle> removables)
+    public void MapHitboxes(List<Rectangle> walls, List<Rectangle> goals, List<Rectangle> points, List<Rectangle> pads, List<Rectangle> speeds, List<Rectangle> doubles, List<Rectangle> enemies, List<Rectangle> collidables, List<Rectangle> removables)
     {
         for (int y = 0; y < mapData.GetLength(0); y++)
         {
@@ -81,7 +81,7 @@ public class Character
             }
         }
     }
-    public void drawtime()
+    public void Drawtime()
     {
         for (int y = 0; y < mapData.GetLength(0); y++)
         {
@@ -112,27 +112,6 @@ public class Character
                     return r;
                 }
                }
-                // foreach (Rectangle s in removables)
-                // {
-                //     if (Raylib.CheckCollisionRecs(characterRect, s))
-                //     {
-                //         return s;
-                //     }
-                // }
-                // foreach (Rectangle e in removables)
-                // {
-                //     if (Raylib.CheckCollisionRecs(characterRect, e))
-                //     {
-                //         return e;
-                //     }
-                // }
-                // foreach (Rectangle g in removables)
-                // {
-                //     if (Raylib.CheckCollisionRecs(characterRect, g))
-                //     {
-                //         return g;
-                //     }
-                // }
             return new Rectangle();
         }
 
@@ -140,19 +119,12 @@ public class Character
         if (pointRect.width != 0)
         {
             points.Remove(pointRect);
-            ScorePoints = ScorePoints + 1;
-
-            // for (int y = 0; y < mapData.GetLength(0); y++)
-            // {
-            //     for (int x = 0; x < mapData.GetLength(1); x++)
-            //     {
+            scorePoints = scorePoints + 1;
                     // find the tile that is a pointrect then turn it to a 0s
                     if (mapData[(int)pointRect.y / tilesize, (int)pointRect.x / tilesize] == 3)
                     {
                         mapData[(int)pointRect.y / tilesize, (int)pointRect.x / tilesize] = 0;
                     }
-            //     }
-            // }
         }
 
         Rectangle speedRect = CheckCollision(characterRect, speeds);
@@ -161,18 +133,12 @@ public class Character
             speeds.Remove(speedRect);
             speedtime = 420;
             speeded = true;
-
-            // for (int y = 0; y < mapData.GetLength(0); y++)
-            // {
-            //     for (int x = 0; x < mapData.GetLength(1); x++)
-            //     {
                     // find the tile that is a speedrect then turn it to a 0s
                     if (mapData[(int)speedRect.y / tilesize, (int)speedRect.x / tilesize] == 5)
                     {
                         mapData[(int)speedRect.y / tilesize, (int)speedRect.x / tilesize] = 0;
                     }
-            //     }
-            // }
+
         }
 
         Rectangle goalRect = CheckCollision(characterRect, goals);
@@ -181,17 +147,11 @@ public class Character
             goals.Remove(goalRect);
             scene = "won";
 
-            // for (int y = 0; y < mapData.GetLength(0); y++)
-            // {
-            //     for (int x = 0; x < mapData.GetLength(1); x++)
-            //     {
                     // find the tile that is a pointrect then turn it to a 0s
                     if (mapData[(int)goalRect.y / tilesize, (int)goalRect.x / tilesize] == 2)
                     {
                         mapData[(int)goalRect.y / tilesize, (int)goalRect.x / tilesize] = 0;
                     }
-            //     }
-            // }
         }
 
         Rectangle enemiesRect = CheckCollision(characterRect, enemies);
@@ -199,17 +159,12 @@ public class Character
         {
             enemies.Remove(enemiesRect);
             scene = "fight";
-            // for (int y = 0; y < mapData.GetLength(0); y++)
-            // {
-            //     for (int x = 0; x < mapData.GetLength(1); x++)
-            //     {
 
                     if (mapData[(int)enemiesRect.y / tilesize, (int)enemiesRect.x / tilesize] == 7)
                     {
                         mapData[(int)enemiesRect.y / tilesize, (int)enemiesRect.x / tilesize] = 8;
                     }
-            //     }
-            // }
+
         }
     }
 
@@ -219,10 +174,10 @@ public class Character
     {
         movement = Vector2.Zero;
         bool grounded = FeetCollision(charfeet, walls);
-        if (grounded == true) { Gravity = false; }
-        if (grounded == false) { Gravity = true; }
-        if (Gravity == true) { charGravity = 8.0f; }
-        if (Gravity == false) { charGravity = 0; }
+        if (grounded == true) { gravity = false; }
+        if (grounded == false) { gravity = true; }
+        if (gravity == true) { charGravity = 8.0f; }
+        if (gravity == false) { charGravity = 0; }
 
         if (speeded == true)
         {
@@ -357,13 +312,13 @@ public class Character
 
         if (text == true)
         {
-            Raylib.DrawText($"Points:{ScorePoints}", (int)characterRect.x - 15, (int)characterRect.y - 50, 25, Color.RED);
+            Raylib.DrawText($"Points:{scorePoints}", (int)characterRect.x - 15, (int)characterRect.y - 50, 25, Color.RED);
         }
 
 
     }
 
-    public void charImage()
+    public void CharImage()
     {
         Raylib.DrawTexture(characterImage, (int)characterRect.x, (int)characterRect.y, Color.WHITE);
     }
