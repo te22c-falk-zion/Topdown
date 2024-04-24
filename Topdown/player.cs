@@ -254,21 +254,6 @@ public class Character
                 return true;
             }
         }
-        foreach (Rectangle b in collidables)
-        {
-            if (Raylib.CheckCollisionRecs(characterRect, b))
-            {
-                return true;
-            }
-        }
-        foreach (Rectangle d in collidables)
-        {
-            if (Raylib.CheckCollisionRecs(characterRect, d))
-            {
-                return true;
-            }
-        }
-
         return false;
     }
     static bool FeetCollision(Rectangle charfeet, List<Rectangle> effects)
@@ -280,14 +265,6 @@ public class Character
                 return true;
             }
         }
-        foreach (Rectangle b in effects)
-        {
-            if (Raylib.CheckCollisionRecs(charfeet, b))
-            {
-                return true;
-            }
-        }
-
         return false;
     }
 
