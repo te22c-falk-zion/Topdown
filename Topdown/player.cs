@@ -100,9 +100,6 @@ public class Character
             }
         }
     }
-
-    public void CheckCollision(List<Rectangle> points, List<Rectangle> speeds, List<Rectangle> enemies, List<Rectangle> goals)
-    {
         static Rectangle CheckCollision(Rectangle characterRect, List<Rectangle> removables)
         {
                foreach (Rectangle r in removables)
@@ -114,6 +111,10 @@ public class Character
                }
             return new Rectangle();
         }
+
+    public void CheckCollision(List<Rectangle> points, List<Rectangle> speeds, List<Rectangle> enemies, List<Rectangle> goals)
+    {
+
 
         Rectangle pointRect = CheckCollision(characterRect, points);
         if (pointRect.width != 0)
