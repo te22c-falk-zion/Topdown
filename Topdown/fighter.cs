@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using Raylib_cs;
 
+// strings, ints, booleans
 public class Fighter
 
 {
@@ -16,7 +17,8 @@ public class Fighter
     public Boolean attack;
     public Boolean counter;
     public Boolean countermiss;
-
+    
+    // Attack code
     public void Attack(Fighter target, Fighter user)
     {
         damage = Random.Shared.Next(_mindamage, _maxdamage);
@@ -25,6 +27,7 @@ public class Fighter
         counter = false;
         countermiss = false;
     }
+    // Counter code
     public void Counter(Fighter target, Fighter user)
     {
         int dice = Random.Shared.Next(_mindamage,_maxdamage);
@@ -47,6 +50,7 @@ public class Fighter
 
     }
 
+    // Cannot go below 0 
     public void Hurt(int amount)
     {
         _hp -= amount;

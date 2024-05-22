@@ -1,6 +1,7 @@
 using System.Numerics;
 using Raylib_cs;
 
+// ints, floats, bools, strings, textures
 public class Character
 {
     public int height = 64;
@@ -37,6 +38,8 @@ public class Character
     Texture2D demon = Raylib.LoadTexture("demon.png");
     Texture2D demonbody = Raylib.LoadTexture("demonkill.png");
     Texture2D doubleJ = Raylib.LoadTexture("Up_arrow.png");
+
+    // The map
     public int[,] mapData = {
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -63,6 +66,7 @@ public class Character
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 };
 
+// Drawing map hitboxes
     public void MapHitboxes(List<Rectangle> walls, List<Rectangle> goals, List<Rectangle> points, List<Rectangle> pads, List<Rectangle> speeds, List<Rectangle> doubles, List<Rectangle> enemies, List<Rectangle> collidables, List<Rectangle> removables)
     {
         for (int y = 0; y < mapData.GetLength(0); y++)
@@ -81,6 +85,7 @@ public class Character
             }
         }
     }
+    // Drawing Textures
     public void Drawtime()
     {
         for (int y = 0; y < mapData.GetLength(0); y++)
@@ -100,6 +105,7 @@ public class Character
             }
         }
     }
+    // Collision code with stuff to be removed from the map
         static Rectangle CheckCollision(Rectangle characterRect, List<Rectangle> removables)
         {
                foreach (Rectangle r in removables)
@@ -112,49 +118,48 @@ public class Character
             return new Rectangle();
         }
 
+        // Collision with eveerything
     public void CheckCollision(List<Rectangle> points, List<Rectangle> speeds, List<Rectangle> enemies, List<Rectangle> goals)
     {
 
-
+        // When touching points find the tile that is a pointrect then turn it to a 0s
         Rectangle pointRect = CheckCollision(characterRect, points);
         if (pointRect.width != 0)
         {
             points.Remove(pointRect);
             scorePoints = scorePoints + 1;
-                    // find the tile that is a pointrect then turn it to a 0s
                     if (mapData[(int)pointRect.y / tilesize, (int)pointRect.x / tilesize] == 3)
                     {
                         mapData[(int)pointRect.y / tilesize, (int)pointRect.x / tilesize] = 0;
                     }
         }
 
+        // When touching a speed boost find the tile that is a speedrect then turn it to a 0s on the mapdata
         Rectangle speedRect = CheckCollision(characterRect, speeds);
         if (speedRect.width != 0)
         {
             speeds.Remove(speedRect);
             speedtime = 420;
             speeded = true;
-                    // find the tile that is a speedrect then turn it to a 0s
                     if (mapData[(int)speedRect.y / tilesize, (int)speedRect.x / tilesize] == 5)
                     {
                         mapData[(int)speedRect.y / tilesize, (int)speedRect.x / tilesize] = 0;
                     }
 
         }
-
+        //When touching a goal find the tile that is a goalrect then turn it to a 0s on the mapdata
         Rectangle goalRect = CheckCollision(characterRect, goals);
         if (goalRect.width != 0)
         {
             goals.Remove(goalRect);
             scene = "won";
 
-                    // find the tile that is a pointrect then turn it to a 0s
                     if (mapData[(int)goalRect.y / tilesize, (int)goalRect.x / tilesize] == 2)
                     {
                         mapData[(int)goalRect.y / tilesize, (int)goalRect.x / tilesize] = 0;
                     }
         }
-
+        // When touching an enemy turn them into 8s
         Rectangle enemiesRect = CheckCollision(characterRect, enemies);
         if (enemiesRect.width != 0)
         {
@@ -173,6 +178,7 @@ public class Character
 
     public void MovementUpdate(List<Rectangle> doubles, List<Rectangle> walls, List<Rectangle> pads, List<Rectangle> collidables)
     {
+        // Gravity
         movement = Vector2.Zero;
         bool grounded = FeetCollision(charfeet, walls);
         if (grounded == true) { gravity = false; }
@@ -180,6 +186,7 @@ public class Character
         if (gravity == true) { charGravity = 8.0f; }
         if (gravity == false) { charGravity = 0; }
 
+        // Player Sprint
         if (speeded == true)
         {
             speed = 13;
@@ -199,7 +206,8 @@ public class Character
             waittime--;
         }
 
-
+        
+        // Player Movement
         if (Raylib.IsKeyDown(KeyboardKey.KEY_A))
         {
             movement.X = -1;
@@ -238,6 +246,8 @@ public class Character
             airtime = 20;
             jump_speed = 40;
         }
+
+        // Player speed
         movement.X *= speed;
 
         characterRect.x += movement.X;
@@ -246,6 +256,8 @@ public class Character
         characterRect.y += movement.Y * jump_speed + charGravity;
         charfeet.y += movement.Y * jump_speed + charGravity;
 
+
+        // Wall collision
         static bool CheckWallCollision(Rectangle characterRect, List<Rectangle> collidables)
     {
         foreach (Rectangle r in collidables)
@@ -257,6 +269,8 @@ public class Character
         }
         return false;
     }
+
+    // Check if feet are toucing the floor
     static bool FeetCollision(Rectangle charfeet, List<Rectangle> effects)
     {
         foreach (Rectangle r in effects)
@@ -268,12 +282,14 @@ public class Character
         }
         return false;
     }
-
+    // If character is touching a wall, retract that movement
         if (CheckWallCollision(characterRect, collidables))
         {
             characterRect.x -= movement.X;
             charfeet.x -= movement.X;
         }
+
+        // If the character falls off the map restart them
         if (characterRect.y >= restartY)
         {
             characterRect.x = 448;
@@ -282,12 +298,14 @@ public class Character
             charfeet.y = 512;
         }
 
+        //If character is touching a wall, retract that movement
         if (CheckWallCollision(characterRect, collidables))
         {
             characterRect.y -= movement.Y * jump_speed + charGravity;
             charfeet.y -= movement.Y * jump_speed + charGravity;
         }
 
+        // HUD
         if (text == true)
         {
             Raylib.DrawText($"Points:{scorePoints}", (int)characterRect.x - 15, (int)characterRect.y - 50, 25, Color.RED);
@@ -296,6 +314,7 @@ public class Character
 
     }
 
+    // Character image
     public void CharImage()
     {
         Raylib.DrawTexture(characterImage, (int)characterRect.x, (int)characterRect.y, Color.WHITE);

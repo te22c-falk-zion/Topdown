@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading.Tasks.Dataflow;
 
+// random generator
 Random generator = new Random();
 
 // ints, bools, strings, floats
@@ -46,23 +47,24 @@ List<Rectangle> removables = new();
 List<Rectangle> collidables = new();
 List<Rectangle> effects = new();
 
+// Classes
 Fighter enemy = new();
 Fighter player = new();
 Character character = new();
 
+// Daring map hitboxes
 character.MapHitboxes(walls, goals, points, pads, speeds,doubles,enemies,collidables,removables);
 
 
-
+// Loop
 while (!Raylib.WindowShouldClose())
 {
-
-        
 
     Raylib.BeginDrawing();
 
     Raylib.ClearBackground(Color.BLACK);
 
+    // Controls scene
     if (character.scene == "controls")
     {
         Raylib.DrawText("Controls\n [W] to jump\n [A] to move left\n [D] to move right\n Shift to sprint\n press [Q] to move on", 80, 40, 30, BLOOD);
@@ -72,11 +74,15 @@ while (!Raylib.WindowShouldClose())
         }
     }
 
+    // Start scene
     else if (character.scene == "start")
     {
+        // Dialogue
         Raylib.DrawText("Welcome oh honourless...The trials await you", 80, 40, 30, BLOOD);
         Raylib.DrawText("Press [Q] to begin your ordeal", 80, 100, 30, BLOOD);
         Raylib.DrawText("Collect points from enemies or scattered hearts", 80, 250, 30, BLOOD);
+
+        // Starting the game
         if (Raylib.IsKeyPressed(KeyboardKey.KEY_Q))
         {
             character.scene = "game";
@@ -86,6 +92,7 @@ while (!Raylib.WindowShouldClose())
         }
     }
 
+    // inside the game
     else if (character.scene == "game")
     {
         // Simply targeting the camera onto the character
@@ -94,13 +101,15 @@ while (!Raylib.WindowShouldClose())
             Raylib.BeginMode2D(camera);
             camera.target = new Vector2(character.characterRect.x + 32, character.characterRect.y + 32);
         }
+
+        // Initialising methods.
         character.CheckCollision(points, speeds, enemies, goals);
         Raylib.ClearBackground(BG);
-
         character.Drawtime();
         character.MovementUpdate(doubles, walls, pads, collidables);
         character.CharImage();
-        
+
+        // Character score
         if (text == true)
         {
             Raylib.DrawText($"Points:{character.scorePoints}",(int)character.characterRect.x - 15,(int)character.characterRect.y - 50, 25, BLOOD);
@@ -110,8 +119,10 @@ while (!Raylib.WindowShouldClose())
     }
 
 
+    // Fight action
     else if (character.scene == "fight")
     {
+        // Fight text
         Raylib.ClearBackground(Color.BLACK);
         Raylib.DrawText("WEEWOO COMBAT!!!!", 80, 60, 40, BLOOD);
         Raylib.DrawText($"Your hp:{player._hp}",80, 500, 40, BLOOD);
@@ -119,6 +130,7 @@ while (!Raylib.WindowShouldClose())
 
         Raylib.DrawText("ATTACK(A)                        COUNTER(G)", 20, 440, 40, BLOOD);
 
+        // Fighting keys
         if(Raylib.IsKeyPressed(KeyboardKey.KEY_A))
         {
             player.Attack(enemy, player);
@@ -128,6 +140,8 @@ while (!Raylib.WindowShouldClose())
         {
             player.Counter(enemy, player);
         }
+
+        // Fight text
         if(player.attack == true)
         {
             Raylib.DrawText($"Player did {player.damage} to the enemy!", 80,100,40,Color.WHITE);
@@ -141,6 +155,8 @@ while (!Raylib.WindowShouldClose())
         {
             Raylib.DrawText($"Unsuccesful couner.. You took {player.damage} damage", 80, 100, 40, Color.WHITE);
         }
+
+        // If player ties
         if (enemy._hp <= 0 && player._hp <= 0)
         {
             character.scene = "game";
@@ -150,10 +166,12 @@ while (!Raylib.WindowShouldClose())
             player.attack = false;
             player.countermiss = false;
         }
+        // If player loses
         else if (player._hp <= 0)
         {
             character.scene = "GG";
         }
+        // If player wins
         else if (enemy._hp <= 0)
         {
             character.scene = "game";
@@ -167,6 +185,7 @@ while (!Raylib.WindowShouldClose())
 
     }
 
+    // Won with 0 points dialogue
     else if (character.scene == "won" && character.scorePoints == 0)
     {
         Raylib.ClearBackground(Color.BLACK);
@@ -176,6 +195,8 @@ while (!Raylib.WindowShouldClose())
         Raylib.DrawText("its enter to [esc] btw\nbet you suck too much to know that", 120, 240, 40, BLOOD);
         }
     }
+
+    // Won with lower than 3 points dialogue
     else if (character.scene == "won" && character.scorePoints < 3)
     {
         Raylib.ClearBackground(Color.BLACK);
@@ -194,6 +215,8 @@ while (!Raylib.WindowShouldClose())
             Raylib.CloseWindow();
         }
     }
+
+    // Won with 6 points dialogue
     else if (character.scene == "won" && character.scorePoints == 6)
     {
         Raylib.ClearBackground(Color.BLACK);
